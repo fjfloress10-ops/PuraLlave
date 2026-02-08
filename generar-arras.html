@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Arras Profesional - PuraLlave</title>
+    <style>
+        :root { --verde: #2ecc71; --oscuro: #2c3e50; --azul: #3498db; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        
+        /* Estilos del Formulario */
+        .no-print { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .no-print h2 { color: var(--oscuro); border-bottom: 2px solid var(--verde); padding-bottom: 10px; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; font-size: 0.9rem; }
+        input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        .btn-generar { background: var(--verde); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.1rem; margin-top: 20px; transition: 0.3s; }
+        .btn-generar:hover { background: #27ae60; transform: translateY(-2px); }
+
+        /* Estilos del Contrato (Vista A4) */
+        #contratoReal { display: none; background: white; width: 210mm; min-height: 297mm; padding: 25mm; margin: 40px auto; box-shadow: 0 0 20px rgba(0,0,0,0.1); line-height: 1.6; color: #1a1a1a; text-align: justify; font-size: 11pt; }
+        h1 { text-align: center; text-decoration: underline; font-size: 1.6rem; margin-bottom: 40px; }
+        .clausula { margin-top: 25px; font-weight: bold; text-transform: uppercase; color: #000; border-bottom: 1px solid #eee; display: block; }
+        .firmas { margin-top: 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; text-align: center; }
+        .espacio-firma { margin-top: 60px; border-top: 1px solid #000; padding-top: 10px; }
+        
+        @media print {
+            .no-print, .btn-print-box { display: none !important; }
+            body { background: white; padding: 0; }
+            #contratoReal { display: block !important; margin: 0; box-shadow: none; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h2>📝 Generador de Contrato</h2>
+    <p>Introduce los datos para incluir las cláusulas de protección (Hipoteca, Cargas y Eficiencia).</p>
+    
+    <label>Ubicación de la vivienda (Dirección completa)</label>
+    <input type="text" id="fDireccion" placeholder="Calle, número, piso y ciudad">
+
+    <label>Nombre del Vendedor</label>
+    <input type="text" id="fVendedor" placeholder="Nombre y apellidos">
+    
+    <label>Nombre del Comprador</label>
+    <input type="text" id="fComprador" placeholder="Nombre y apellidos">
+    
+    <label>Precio Total de Venta (€)</label>
+    <input type="number" id="fPrecio" placeholder="Ej: 220000">
+    
+    <label>Importe de las Arras (Señal entregada €)</label>
+    <input type="number" id="fArras" placeholder="Ej: 22000">
+    
+    <label>Financiación Mínima Necesaria (€)</label>
+    <input type="number" id="fHipo" placeholder="Importe que necesitas del banco">
+
+    <button class="btn-generar" onclick="generar()">✨ Generar Contrato Legal</button>
+</div>
+
+<!-- EL CONTRATO DINÁMICO -->
+<div id="contratoReal">
+    <h1>CONTRATO DE ARRAS PENITENCIALES</h1>
+    
+    <p>En la localidad de ______________________, a fecha de <span id="cFecha"></span>.</p>
+
+    <p><strong>REUNIDOS:</strong> De una parte, como VENDEDOR, <strong><span id="cVendedor"></span></strong>. De otra parte, como COMPRADOR, <strong><span id="cComprador"></span></strong>. Ambas partes se reconocen capacidad legal suficiente para este acto.</p>
+
+    <span class="clausula">PRIMERA: OBJETO</span>
+    <p>El VENDEDOR es propietario de la vivienda situada en <strong><span id="cDireccion"></span></strong>, la cual se compromete a vender al COMPRADOR, quien acepta comprarla en el estado actual de cargas y conservación que se detalla a continuación.</p>
+
+    <span class="clausula">SEGUNDA: PRECIO</span>
+    <p>El precio global de la compraventa se fija en la cantidad de <strong><span id="cPrecio"></span> EUROS</strong>.</p>
+
+    <span class="clausula">TERCERA: ARRAS Y DESISTIMIENTO</span>
+    <p>El COMPRADOR entrega en concepto de arras penitenciales, según el <strong>Art. 1454 del Código Civil</strong>, la suma de <strong><span id="cArras"></span> EUROS</strong>. Si el COMPRADOR rescinde el contrato, perderá dicha suma. Si lo hace el VENDEDOR, deberá devolverla duplicada.</p>
+
+    <span class="clausula">CUARTA: CONDICIÓN DE FINANCIACIÓN</span>
+    <p>La eficacia de este contrato queda condicionada a que el COMPRADOR obtenga una hipoteca por un importe de <strong><span id="cHipo"></span> €</strong>. Si el banco deniega la operación, el VENDEDOR devolverá íntegramente la señal recibida.</p>
+
+    <span class="clausula">QUINTA: LIBERTAD DE CARGAS Y OCUPANTES</span>
+    <p>El VENDEDOR garantiza que la finca se entregará en el momento de la escritura pública <strong>libre de cargas, gravámenes, arrendatarios y ocupantes</strong>, y al corriente en el pago de impuestos y gastos de comunidad.</p>
+
+    <span class="clausula">SEXTA: CERTIFICADO ENERGÉTICO</span>
+    <p>El VENDEDOR se obliga a entregar al COMPRADOR el Certificado de Eficiencia Energética en vigor en el acto de firma de la Escritura Pública ante Notario.</p>
+
+    <div class="firmas">
+        <div class="espacio-firma">Fdo: EL VENDEDOR</div>
+        <div class="espacio-firma">Fdo: EL COMPRADOR</div>
+    </div>
+
+    <div class="btn-print-box" style="text-align: center; margin-top: 50px;">
+        <button onclick="window.print()" style="padding: 15px 30px; background: var(--azul); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">🖨️ Confirmar e Imprimir Contrato</button>
+    </div>
+</div>
+
+<script>
+function generar() {
+    // Captura de datos
+    document.getElementById('cVendedor').innerText = document.getElementById('fVendedor').value || "[Nombre Vendedor]";
+    document.getElementById('cComprador').innerText = document.getElementById('fComprador').value || "[Nombre Comprador]";
+    document.getElementById('cDireccion').innerText = document.getElementById('fDireccion').value || "[Dirección Vivienda]";
+    document.getElementById('cPrecio').innerText = Number(document.getElementById('fPrecio').value).toLocaleString('es-ES');
+    document.getElementById('cArras').innerText = Number(document.getElementById('fArras').value).toLocaleString('es-ES');
+    document.getElementById('cHipo').innerText = Number(document.getElementById('fHipo').value).toLocaleString('es-ES');
+    document.getElementById('cFecha').innerText = new Date().toLocaleDateString('es-ES');
+
+    // Mostrar el papel del contrato
+    document.getElementById('contratoReal').style.display = 'block';
+    
+    // Desplazamiento suave hacia el contrato generado
+    window.scrollTo({
+        top: document.getElementById('contratoReal').offsetTop,
+        behavior: 'smooth'
+    });
+}
+</script>
+
+</body>
+</html>

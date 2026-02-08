@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro Seguro - PuraLlave</title>
+    <style>
+        :root { 
+            --primario: #0984e3; /* Azul Eléctrico */
+            --secundario: #00b894; /* Verde Menta */
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+
+        /* Variables Modo Oscuro (Deep Sea) */
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: var(--texto); transition: 0.3s; }
+        
+        .registro-card { background: var(--blanco); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(9, 132, 227, 0.1); max-width: 450px; width: 100%; border-top: 5px solid var(--primario); position: relative; }
+        
+        /* Botón Volver (Arriba Izquierda) */
+        .btn-volver { position: fixed; top: 20px; left: 20px; padding: 10px 20px; background: var(--blanco); color: var(--primario); border: 2px solid var(--primario); border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-volver:hover { background: var(--primario); color: white; }
+
+        /* Botón Modo Oscuro (Abajo Derecha) */
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; }
+
+        .header-vender { text-align: center; margin-bottom: 30px; }
+        .header-vender h2 { color: var(--primario); margin: 0; font-size: 1.8rem; }
+        
+        .alerta-anti-agencia { background: rgba(0, 184, 148, 0.1); color: var(--secundario); padding: 15px; border-radius: 10px; font-size: 0.9rem; margin-bottom: 20px; border: 1px solid var(--secundario); text-align: center; }
+
+        label { display: block; margin-top: 15px; font-weight: 700; color: var(--primario); font-size: 0.85rem; text-transform: uppercase; }
+        
+        input { width: 100%; padding: 12px; margin-top: 5px; border: 2px solid var(--borde); border-radius: 10px; box-sizing: border-box; background: var(--blanco); color: var(--texto); font-size: 1rem; }
+        input:focus { border-color: var(--primario); outline: none; }
+        
+        .check-group { margin: 25px 0; background: var(--fondo); padding: 15px; border-radius: 12px; }
+        .check-item { display: flex; align-items: center; font-size: 0.85rem; }
+        
+        .btn-publicar { background: linear-gradient(135deg, var(--primario), var(--secundario)); color: white; border: none; padding: 16px; width: 100%; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn-publicar:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3); }
+    </style>
+</head>
+<body>
+
+    <a href="purallave.html" class="btn-volver">🏠 Inicio</a>
+    
+    <button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+    <div class="registro-card">
+        <div class="header-vender">
+            <h2>Registro de Dueño</h2>
+            <p>Vende sin pagar comisiones</p>
+        </div>
+
+        <div class="alerta-anti-agencia">
+            🔒 Filtro de seguridad para particulares activo
+        </div>
+
+        <form id="registroForm">
+            <label>Nombre y Apellidos</label>
+            <input type="text" id="nombre" placeholder="Nombre real del titular" required>
+
+            <label>DNI / NIE</label>
+            <input type="text" id="dni" placeholder="Ej: 12345678X" required>
+
+            <div class="check-group">
+                <div class="check-item">
+                    <input type="checkbox" required style="width: auto; margin-right: 10px;">
+                    <span>Certifico que no soy una agencia inmobiliaria.</span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-publicar">Validar y Continuar ➔</button>
+        </form>
+    </div>
+
+<script>
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    window.onload = () => {
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btnDark').innerText = "☀️ Modo Claro";
+        }
+    };
+
+    document.getElementById('registroForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        window.location.href = "publicar.html";
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso Seguro - PuraLlave</title>
+    <style>
+        :root {
+            --primario: #0984e3; --secundario: #00b894; --fondo: #f1f7f9;
+            --blanco: #ffffff; --texto: #2d3436; --borde: #dfe6e9; --rojo: #ff7675;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a; --blanco: #1e293b; --texto: #f1f2f6;
+            --primario: #3498db; --secundario: #55efc4; --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; color: var(--texto); transition: 0.3s; }
+        
+        .login-container { background: var(--blanco); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 450px; border-top: 5px solid var(--primario); }
+        
+        .tabs { display: flex; margin-bottom: 30px; border-bottom: 2px solid var(--borde); }
+        .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; color: #999; transition: 0.3s; }
+        .tab.active { color: var(--primario); border-bottom: 3px solid var(--primario); margin-bottom: -2px; }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.4s; }
+
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 0.85rem; color: var(--primario); text-transform: uppercase; }
+        
+        .pass-wrapper { position: relative; display: flex; align-items: center; }
+        input { width: 100%; padding: 12px; margin-top: 5px; border: 2px solid var(--borde); border-radius: 10px; box-sizing: border-box; background: var(--fondo); color: var(--texto); font-size: 1rem; }
+        
+        /* El icono del ojo */
+        .toggle-pass { position: absolute; right: 12px; top: 12px; cursor: pointer; font-size: 1.2rem; opacity: 0.6; z-index: 10; user-select: none; }
+
+        .advertencia { background: #fff3cd; color: #856404; padding: 15px; border-radius: 10px; border: 1px solid #ffeeba; margin-bottom: 15px; font-size: 0.85rem; display: none; }
+        .error-msg { color: var(--rojo); font-size: 0.85rem; font-weight: bold; margin-top: 10px; display: none; }
+
+        .btn-submit { background: linear-gradient(135deg, var(--primario), var(--secundario)); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.3s; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3); }
+
+        .btn-volver { position: fixed; top: 20px; left: 20px; padding: 10px 20px; background: var(--blanco); color: var(--primario); border: 2px solid var(--primario); border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <a href="purallave.html" class="btn-volver">🏠 Inicio</a>
+    <button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+    <div class="login-container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">Entrar</div>
+            <div class="tab" onclick="switchTab('registro')">Registrarse</div>
+        </div>
+
+        <!-- INICIAR SESIÓN -->
+        <div id="login" class="form-section active">
+            <form id="formAcceso">
+                <label>Email</label>
+                <input type="email" id="logEmail" placeholder="usuario@email.com" required>
+                <label>Contraseña</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="logPass" placeholder="••••••••" required>
+                    <span class="toggle-pass" onclick="toggleView('logPass', this)">👁️</span>
+                </div>
+                <div id="errorLog" class="error-msg">❌ Email o contraseña incorrectos.</div>
+                <button type="submit" class="btn-submit">Iniciar Sesión ➔</button>
+            </form>
+        </div>
+
+        <!-- REGISTRO -->
+        <div id="registro" class="form-section">
+            <form id="formRegistro">
+                <div id="advVip" class="advertencia">
+                    <strong>⚠️ ADVERTENCIA:</strong> Se han detectado términos de inmobiliaria. PuraLlave es solo para particulares.
+                </div>
+
+                <label>Nombre Completo</label>
+                <input type="text" id="regNombre" placeholder="Nombre real" required oninput="validarFiltro(this.value)">
+                
+                <label>DNI / NIE</label>
+                <input type="text" id="regDni" placeholder="12345678X" required>
+
+                <label>Email</label>
+                <input type="email" id="regEmail" placeholder="email@ejemplo.com" required>
+
+                <label>Contraseña</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="regPass1" placeholder="Mínimo 8 caracteres" required>
+                    <span class="toggle-pass" onclick="toggleView('regPass1', this)">👁️</span>
+                </div>
+
+                <label>Repetir Contraseña</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="regPass2" placeholder="Repite tu contraseña" required>
+                    <span class="toggle-pass" onclick="toggleView('regPass2', this)">👁️</span>
+                </div>
+                
+                <div style="margin-top: 15px; background: rgba(0, 184, 148, 0.1); padding: 10px; border-radius: 8px; font-size: 0.75rem;">
+                    <input type="checkbox" required style="width: auto; margin-right: 5px;">
+                    Juro que soy un <strong>particular</strong> y no cobro comisiones.
+                </div>
+
+                <div id="errorReg" class="error-msg"></div>
+                <button type="submit" class="btn-submit">Crear Mi Cuenta ✨</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // --- LÓGICA DINÁMICA DEL OJO ---
+    function toggleView(id, btn) {
+        const input = document.getElementById(id);
+        if (input.type === "password") {
+            input.type = "text";
+            btn.innerText = "🙈"; // Ojo tachado/mono tapado
+        } else {
+            input.type = "password";
+            btn.innerText = "👁️"; // Ojo abierto
+        }
+    }
+
+    // --- INTERFAZ ---
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function validarFiltro(valor) {
+        const adv = document.getElementById('advVip');
+        const palabras = ["inmobiliaria", "agencia", "realty", "gestion", "estate", "house"];
+        adv.style.display = palabras.some(w => valor.toLowerCase().includes(w)) ? "block" : "none";
+    }
+
+    // --- BASE DE DATOS LOCAL ---
+    const formReg = document.getElementById('formRegistro');
+    const formLog = document.getElementById('formAcceso');
+
+    formReg.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('regEmail').value;
+        const p1 = document.getElementById('regPass1').value;
+        const p2 = document.getElementById('regPass2').value;
+        const error = document.getElementById('errorReg');
+
+        if(p1 !== p2) {
+            error.innerText = "❌ Las contraseñas no coinciden.";
+            error.style.display = "block";
+            return;
+        }
+
+        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+        if(usuarios.find(u => u.email === email)) {
+            error.innerText = "❌ Este email ya existe.";
+            error.style.display = "block";
+            return;
+        }
+
+        usuarios.push({ 
+            nombre: document.getElementById('regNombre').value, 
+            dni: document.getElementById('regDni').value, 
+            email: email, 
+            pass: p1 
+        });
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        alert("✅ Perfil creado. ¡Ya puedes entrar!");
+        location.reload(); 
+    });
+
+    formLog.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('logEmail').value;
+        const pass = document.getElementById('logPass').value;
+        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+        const user = usuarios.find(u => u.email === email && u.pass === pass);
+
+        if(user) {
+            localStorage.setItem('usuarioSesion', JSON.stringify(user));
+            window.location.href = 'perfil.html'; // ← REDIRECCIÓN A PERFIL
+        } else {
+            document.getElementById('errorLog').style.display = "block";
+        }
+    });
+
+    window.onload = () => {
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btnDark').innerText = "☀️ Modo Claro";
+        }
+    };
+</script>
+</body>
+</html>

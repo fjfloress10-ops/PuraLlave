@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil - PuraLlave</title>
+    <style>
+        :root { 
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+            --favoritos: #e74c3c;
+            --chat: #9b59b6;
+        }
+        
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: var(--fondo); 
+            color: var(--texto);
+            margin: 0; 
+            transition: 0.3s; 
+        }
+
+        .nav-perfil { 
+            background: var(--blanco); 
+            padding: 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        
+        h3 {
+            color: var(--primario);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 3px solid var(--secundario);
+            display: inline-block;
+        }
+        
+        .user-card {
+            background: var(--blanco);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secundario);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        
+        .user-card h2 {
+            margin: 0 0 20px 0;
+            color: var(--primario);
+        }
+        
+        .info-row {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--borde);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: var(--primario);
+            font-size: 0.85rem;
+        }
+        
+        .info-value {
+            color: var(--texto);
+        }
+        
+        .info-input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid var(--borde);
+            border-radius: 8px;
+            background: var(--fondo);
+            color: var(--texto);
+            font-size: 0.95rem;
+        }
+        
+        .modo-vista {
+            display: block;
+        }
+        
+        .modo-edicion {
+            display: none;
+        }
+        
+        .piso-usuario {
+            background: var(--blanco);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--borde);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        
+        .piso-usuario:hover {
+            transform: scale(1.01);
+            box-shadow: 0 6px 15px rgba(9, 132, 227, 0.15);
+            border-color: var(--primario);
+        }
+        
+        .piso-info {
+            flex-grow: 1;
+        }
+        
+        .piso-titulo {
+            font-weight: bold;
+            color: var(--primario);
+            margin-bottom: 5px;
+        }
+        
+        .piso-precio {
+            color: var(--secundario);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .piso-detalle {
+            font-size: 0.85rem;
+            color: var(--texto);
+            opacity: 0.7;
+        }
+        
+        .piso-estado {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .estado-activo {
+            background: rgba(0, 184, 148, 0.2);
+            color: var(--secundario);
+        }
+        
+        .estado-reservado {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .estado-vendido {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+        
+        .estado-alquilado {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+        }
+        
+        .piso-acciones {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            /* Estilos base para todos los botones */
+            padding: 8px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        /* Estilos específicos para cada botón */
+        .btn-favoritos {
+            background: var(--favoritos);
+            color: white;
+        }
+
+        .btn-chat {
+            background: var(--chat);
+            color: white;
+        }
+
+        .btn-publicar {
+            background: var(--secundario);
+            color: white;
+        }
+
+        .btn-cerrar {
+            background: #95a5a6;
+            color: white;
+        }
+
+        /* Estados hover */
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        /* Estados específicos */
+        .btn-editar {
+            background: var(--primario);
+        }
+
+        .btn-eliminar {
+            background: #dc3545;
+        }
+
+        .btn-estado {
+            background: var(--secundario);
+        }
+
+        .btn-guardar-estado {
+            background: #28a745;
+        }
+        
+        .btn-editar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(9, 132, 227, 0.3);
+        }
+        
+        .btn-guardar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+        }
+        
+        .btn-cancelar {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-cerrar:hover {
+            background: #d63031;
+        }
+        
+        .btn-favoritos {
+            background: var(--favoritos);
+            color: white;
+        }
+        
+        .btn-chat {
+            background: var(--chat);
+            color: white;
+        }
+        
+        .btn-publicar {
+            background: var(--secundario);
+            color: white;
+        }
+        
+        .badge {
+            background: white;
+            color: var(--primario);
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Botón Modo Oscuro */
+        .btn-dark-mode {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            background: var(--primario);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        
+        .btn-dark-mode:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+        
+        /* Responsive */
+        @media (max-width: 700px) {
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            .nav-perfil {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+<div class="nav-perfil">
+<a href="purallave.html" style="text-decoration: none; color: var(--primario); font-weight: bold; display: flex; align-items: center; gap: 8px;">
+    🏠 Inicio
+</a>
+
+<div class="nav-buttons">
+<button class="btn btn-favoritos" onclick="irAFavoritos()">❤️ Favoritos <span class="badge" id="contadorFavoritos">0</span></button>
+<button class="btn btn-chat" onclick="irAChat()">💬 Chat <span class="badge" id="contadorMensajes">0</span></button>
+<button class="btn btn-publicar" onclick="irAPublicar()">➕ Publicar</button>
+<button class="btn btn-cerrar" onclick="cerrarSesion()">Cerrar Sesión</button>
+</div>
+</div>
+
+<div class="container">
+
+<div class="user-card">
+<h2>Mi Perfil Personal 👤</h2>
+
+<div id="modoVista">
+<div class="info-row"><span class="info-label">Nombre:</span><span id="verNombre">-</span></div>
+<div class="info-row"><span class="info-label">Alias:</span><span id="verAlias">-</span></div>
+<div class="info-row"><span class="info-label">DNI:</span><span id="verDni">-</span></div>
+<div class="info-row"><span class="info-label">Email:</span><span id="verEmail">-</span></div>
+<div class="info-row"><span class="info-label">Teléfono:</span><span id="verTelefono">No especificado</span></div>
+<div class="info-row"><span class="info-label">Dirección:</span><span id="verDireccion">No especificada</span></div>
+<button class="btn btn-editar" onclick="activarEdicion()">✏️ Editar Perfil</button>
+</div>
+
+<div id="modoEdicion">
+<div class="info-row"><span class="info-label">Nombre:</span><input type="text" class="info-input" id="editNombre" placeholder="Tu nombre completo"></div>
+<div class="info-row"><span class="info-label">Alias:</span><input type="text" class="info-input" id="editAlias" placeholder="Tu alias público"></div>
+<div class="info-row"><span class="info-label">DNI:</span><input type="text" class="info-input" id="editDni" placeholder="12345678X" readonly style="opacity: 0.6; cursor: not-allowed;"></div>
+<div class="info-row"><span class="info-label">Email:</span><input type="email" class="info-input" id="editEmail" placeholder="email@ejemplo.com" readonly style="opacity: 0.6; cursor: not-allowed;"></div>
+<div class="info-row"><span class="info-label">Teléfono:</span><input type="tel" class="info-input" id="editTelefono" placeholder="600 123 456"></div>
+<div class="info-row"><span class="info-label">Dirección:</span><input type="text" class="info-input" id="editDireccion" placeholder="Calle, número, ciudad"></div>
+<button class="btn btn-guardar" onclick="guardarCambios()">💾 Guardar Cambios</button>
+<button class="btn btn-cancelar" onclick="cancelarEdicion()">✖️ Cancelar</button>
+<button class="btn btn-eliminar" onclick="eliminarCuenta()">🗑️ Eliminar Cuenta</button>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function toggleDarkMode(){
+    document.body.classList.toggle("dark-mode");
+    const estado=document.body.classList.contains("dark-mode");
+    localStorage.setItem("darkMode",estado);
+    document.getElementById("btnDark").textContent=estado?"☀️ Modo Claro":"🌙 Modo Oscuro";
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+    if(localStorage.getItem("darkMode")==="true"){
+        document.body.classList.add("dark-mode");
+        document.getElementById("btnDark").textContent="☀️ Modo Claro";
+    }
+});
+
+let usuarioActual=null;
+
+function cargarDatosUsuario(){
+const user=JSON.parse(localStorage.getItem("usuarioSesion"));
+if(!user){location.href="login.html";return;}
+usuarioActual=user;
+verNombre.textContent=user.nombre||"-";
+verAlias.textContent=user.alias||"-";
+verDni.textContent=user.dni||"-";
+verEmail.textContent=user.email||"-";
+}
+
+function activarEdicion() {
+    // Ocultar modo vista
+    document.getElementById('modoVista').style.display = 'none';
+    document.getElementById('modoEdicion').style.display = 'block';
+    
+    // Cargar datos en los inputs
+    document.getElementById('editNombre').value = usuarioActual.nombre || '';
+    document.getElementById('editAlias').value = usuarioActual.alias || '';
+    document.getElementById('editDni').value = usuarioActual.dni || '';
+    document.getElementById('editEmail').value = usuarioActual.email || '';
+    document.getElementById('editTelefono').value = usuarioActual.telefono || '';
+    document.getElementById('editDireccion').value = usuarioActual.direccion || '';
+}
+
+function cancelarEdicion() {
+    // Volver a modo vista
+    document.getElementById('modoVista').style.display = 'block';
+    document.getElementById('modoEdicion').style.display = 'none';
+}
+
+function guardarCambios() {
+    // Actualizar datos del usuario actual
+    usuarioActual.nombre = document.getElementById('editNombre').value;
+    usuarioActual.alias = document.getElementById('editAlias').value;
+    usuarioActual.telefono = document.getElementById('editTelefono').value;
+    usuarioActual.direccion = document.getElementById('editDireccion').value;
+    
+    // Actualizar en localStorage - usuarioSesion
+    localStorage.setItem('usuarioSesion', JSON.stringify(usuarioActual));
+    
+    // Actualizar en la lista de usuarios
+    const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    const index = usuarios.findIndex(u => u.email === usuarioActual.email);
+    if(index !== -1) {
+        usuarios[index] = usuarioActual;
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    }
+    
+    // Volver a modo vista
+    cargarDatosUsuario();
+    cancelarEdicion();
+    
+    // Mostrar confirmación
+    alert('✅ Perfil actualizado correctamente');
+}
+
+function eliminarCuenta() {
+    if(!confirm('⚠️ ¿Estás seguro de que quieres eliminar tu cuenta? Esta acción eliminará todos tus datos, anuncios y conversaciones. No se puede deshacer.')) {
+        return;
+    }
+
+    const userEmail = usuarioActual.email;
+    
+    // Eliminar usuario de la lista de usuarios
+    let usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+    usuarios = usuarios.filter(u => u.email !== userEmail);
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    
+    // Eliminar todos los anuncios del usuario
+    let anuncios = JSON.parse(localStorage.getItem('misAnuncios')) || [];
+    anuncios = anuncios.filter(a => a.duenoEmail !== userEmail);
+    localStorage.setItem('misAnuncios', JSON.stringify(anuncios));
+    
+    // Eliminar todas las conversaciones del usuario
+    let conversaciones = JSON.parse(localStorage.getItem('conversaciones')) || [];
+    conversaciones = conversaciones.filter(c => 
+        !c.participantes.includes(userEmail) && 
+        !c.creadorEmail === userEmail
+    );
+    localStorage.setItem('conversaciones', JSON.stringify(conversaciones));
+    
+    // Eliminar todos los mensajes del usuario
+    let mensajes = JSON.parse(localStorage.getItem('mensajes')) || [];
+    mensajes = mensajes.filter(m => 
+        m.remitenteEmail !== userEmail && 
+        m.destinatarioEmail !== userEmail
+    );
+    localStorage.setItem('mensajes', JSON.stringify(mensajes));
+    
+    // Eliminar favoritos del usuario
+    let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+    favoritos = favoritos.filter(f => f.usuarioEmail !== userEmail);
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    
+    // Eliminar notificaciones del usuario
+    let notificaciones = JSON.parse(localStorage.getItem('notificaciones')) || [];
+    notificaciones = notificaciones.filter(n => n.usuarioEmail !== userEmail);
+    localStorage.setItem('notificaciones', JSON.stringify(notificaciones));
+    
+    // Cerrar sesión
+    localStorage.removeItem('usuarioSesion');
+    
+    alert('✅ Cuenta eliminada correctamente. Todos tus datos han sido borrados.');
+    window.location.href = 'purallave.html';
+}
+
+window.onload=()=>{
+cargarDatosUsuario();
+actualizarContadores();
+};
+
+function actualizarContadores(){
+contadorFavoritos.textContent=(JSON.parse(localStorage.getItem("favoritos"))||[]).length;
+contadorMensajes.textContent=(JSON.parse(localStorage.getItem("mensajes"))||[]).length;
+}
+
+function irAFavoritos(){location.href="favoritos.html";}
+function irAChat(){location.href="chat.html";}
+function irAPublicar(){location.href="publicar.html";}
+function cerrarSesion(){localStorage.removeItem("usuarioSesion");location.href="purallave.html";}
+
+</script>
+
+</body>
+</html>

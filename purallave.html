@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuraLlave - Compraventa entre Particulares</title>
+    <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--fondo); color: var(--texto); transition: 0.3s; }
+        
+        /* HEADER CON LOGO Y LOGIN */
+        header { background: var(--blanco); padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        
+        .logo-wrapper { display: flex; align-items: center; text-decoration: none; }
+        .logo-icon { position: relative; width: 35px; height: 40px; margin-right: 10px; }
+        .casa-tejado { width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 13px solid var(--secundario); }
+        .casa-cuerpo { width: 28px; height: 22px; background: var(--secundario); margin: 0 auto; border-radius: 0 0 4px 4px; }
+        .txt-pura { font-size: 1.6rem; font-weight: 800; color: var(--primario); }
+        .txt-llave { font-size: 1.6rem; font-weight: 300; color: var(--secundario); }
+
+        .btn-login { background: transparent; color: var(--primario); border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-login:hover { background: var(--primario); color: white; }
+        
+        .btn-perfil { background: var(--primario); color: white; border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-perfil:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .acciones { text-align: center; margin-bottom: 40px; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+        .btn { padding: 16px 25px; border: none; border-radius: 12px; color: white; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-decoration: none; display: inline-block; }
+        
+        .comprar { background: var(--primario); }
+        .guia-btn { background: #6c5ce7; }
+        .vender { background: var(--secundario); }
+        .btn:hover { transform: translateY(-3px); opacity: 0.9; }
+
+        .seccion-titulo { border-bottom: 3px solid var(--secundario); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; color: var(--primario); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .piso-card { background: var(--blanco); border-radius: 15px; overflow: hidden; margin-bottom: 25px; display: flex; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; position: relative; border: 1px solid var(--borde); }
+        .piso-card:hover { transform: scale(1.01); box-shadow: 0 10px 25px rgba(9, 132, 227, 0.15); border-color: var(--primario); }
+        .badge { position: absolute; top: 15px; left: 15px; background: var(--secundario); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; z-index: 10; }
+        .piso-card img { width: 280px; height: 200px; object-fit: cover; background: #333; }
+        .info { padding: 25px; flex-grow: 1; }
+        .info h4 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--primario); }
+        .precio { color: var(--secundario); font-weight: 800; font-size: 1.5rem; margin-top: 10px; }
+        
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+
+        @media (max-width: 600px) { .piso-card { flex-direction: column; } .piso-card img { width: 100%; } .header-content { flex-direction: column; gap: 15px; } }
+    </style>
+</head>
+<body>
+
+    <button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <div class="casa-tejado"></div>
+                    <div class="casa-cuerpo"></div>
+                </div>
+                <div class="logo-texto">
+                    <span class="txt-pura">Pura</span><span class="txt-llave">Llave</span>
+                </div>
+            </div>
+            <!-- BOTÓN DE LOGIN O PERFIL -->
+            <div id="headerAuth"></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="acciones">
+            <button class="btn comprar" onclick="window.location.href='catalogo.html'">🔍 Ver Catálogo</button>
+            <button class="btn guia-btn" onclick="irAGuia()">📖 Guía de Compra</button>
+            <button class="btn vender" onclick="irAVender()">🤝 Publicar</button>
+        </div>
+
+        <h3 id="tituloSeccion" class="seccion-titulo">AÑADIDOS RECIENTEMENTE</h3>
+        
+        <div id="contenedorAnuncios"></div>
+        
+        <p style="text-align:center; margin-top:50px;">
+            <button onclick="localStorage.clear(); location.reload();" style="background:none; border:none; color:#ccc; cursor:pointer; font-size:0.7rem;">Limpiar base de datos de prueba</button>
+        </p>
+    </div>
+
+<script>
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    // VERIFICAR SI HAY SESIÓN
+    function verificarSesion() {
+        const user = JSON.parse(localStorage.getItem('usuarioSesion'));
+        const headerAuth = document.getElementById('headerAuth');
+        
+        if(user) {
+            // Usuario logueado - mostrar botón de perfil
+            headerAuth.innerHTML = `<a href="perfil.html" class="btn-perfil">👤 Mi Perfil</a>`;
+        } else {
+            // No hay sesión - mostrar botón de login
+            headerAuth.innerHTML = `<a href="login.html" class="btn-login">🔑 Acceso Usuarios</a>`;
+        }
+    }
+
+    // FUNCIONES CON PROTECCIÓN DE LOGIN
+    function irAGuia() {
+        const user = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if(!user) {
+            if(confirm('🔒 Debes iniciar sesión para acceder a la Guía de Compra.\n\n¿Quieres ir al login ahora?')) {
+                window.location.href = 'login.html';
+            }
+            return;
+        }
+        window.location.href = 'guia.html';
+    }
+
+    function irAVender() {
+        window.location.href = 'login.html';
+    }
+
+    window.onload = () => {
+        verificarSesion();
+        
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btnDark').innerText = "☀️ Modo Claro";
+        }
+        cargarAnuncios(5);
+    };
+
+    function cargarAnuncios(limite = 5) {
+        const contenedor = document.getElementById('contenedorAnuncios');
+        const titulo = document.getElementById('tituloSeccion');
+        const anuncios = JSON.parse(localStorage.getItem('misAnuncios')) || [];
+        
+        if (anuncios.length === 0) {
+            contenedor.innerHTML = "<div style='text-align:center; padding:40px; color:#999;'>🏠 Todavía no hay anuncios. ¡Sé el primero!</div>";
+            return;
+        }
+
+        const listaAMostrar = limite > 0 ? anuncios.slice(0, limite) : anuncios;
+        titulo.innerText = limite > 0 ? "AÑADIDOS RECIENTEMENTE" : "CATÁLOGO COMPLETO";
+
+        contenedor.innerHTML = listaAMostrar.map((piso, index) => `
+            <div class="piso-card" onclick="verDetalle(${piso.fecha})">
+                <div class="badge">${piso.tipo === 'garaje' ? '🅿️ GARAJE' : '🏠 PARTICULAR'}</div>
+                <img src="https://images.unsplash.com" alt="Inmueble">
+                <div class="info">
+                    <h4>${piso.titulo}</h4>
+                    <p>✨ Trato directo • Sin comisiones</p>
+                    <p>${piso.dimensiones ? piso.dimensiones + ' m²' : ''} ${piso.habitaciones ? ' • ' + piso.habitaciones : ''}</p>
+                    <p class="precio">${Number(piso.precio).toLocaleString()} €</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function verDetalle(id) {
+        localStorage.setItem('pisoActual', id);
+        window.location.href = "registrodepublicaciones.html";
+    }
+
+    function mostrarTodos() {
+        cargarAnuncios(0);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>

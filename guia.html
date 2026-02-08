@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Guía de Compraventa Directa - PuraLlave</title>
+   <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #11cde6;
+            --blanco: #faf7f7;
+            --texto: #060707;
+            --borde: #f4f7f8;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #bec2d4;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; color: var(--texto); background: var(--fondo); margin: 0; padding-bottom: 50px; transition: 0.3s; }
+        header { background: var(--purpura); color: rgb(255, 255, 255); padding: 60px 20px; text-align: center; }
+        
+        .container { max-width: 850px; margin: -40px auto 60px; background: var(--blanco); padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        
+        h2 { color: var(--oscuro); border-left: 5px solid var(--verde); padding-left: 15px; margin-top: 40px; }
+        
+        /* Calculadoras */
+        .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+        .calc-card { background: var(--blanco); border: 1px solid var(--borde); padding: 20px; border-radius: 15px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.8rem; font-weight: bold; color: var(--texto); margin-bottom: 5px; opacity: 0.8; }
+        input { width: 100%; padding: 10px; border: 1px solid var(--borde); border-radius: 8px; box-sizing: border-box; background: var(--fondo); color: var(--texto); }
+        
+        .res-box { background: var(--fondo); padding: 15px; border-radius: 10px; margin-top: 10px; border-left: 4px solid var(--verde); }
+        .res-valor { display: block; font-size: 1.4rem; font-weight: 800; color: var(--verde); }
+
+        .consejo-box { background: rgba(52, 152, 219, 0.1); border-radius: 12px; padding: 25px; margin: 20px 0; border: 1px solid var(--azul); }
+        
+        .btn-generador { background: var(--purpura); color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block; transition: 0.3s; }
+        .btn-generador:hover { transform: translateY(-2px); opacity: 0.9; }
+        
+        .btn-volver { display: inline-block; margin-bottom: 20px; color: var(--purpura); text-decoration: none; font-weight: bold; }
+        
+        /* Botón Modo Oscuro Flotante */
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--purpura); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        @media (max-width: 700px) { .calc-wrapper { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="">
+
+<button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+<header>
+    <h1>Manual del Comprador Inteligente</h1>
+    <p>Guía profesional para comprar sin inmobiliarias</p>
+</header>
+
+<div class="container">
+    <a href="purallave.html" class="btn-volver">← Volver a PuraLlave</a>
+
+    <h2>1. Verificación previa</h2>
+    <p>Antes de firmar nada, solicita la **Nota Simple** en el [Colegio de Registradores](https://www.registradores.org). Verifica el dueño único y que no existan embargos.</p>
+
+    <h2>2. Planifica tus números</h2>
+    <div class="calc-wrapper">
+        <div class="calc-card">
+            <h3>💰 Gastos de Compra</h3>
+            <div class="input-group">
+                <label>Precio de la vivienda (€)</label>
+                <input type="number" id="pPrecio" value="150000" oninput="runCalcs()">
+            </div>
+            <div class="res-box">
+                <p style="margin:0; font-size: 0.75rem;">Total Impuestos y Gastos (aprox. 10%):</p>
+                <span class="res-valor" id="rGastos">15.000 €</span>
+            </div>
+        </div>
+
+        <div class="calc-card">
+            <h3>🏠 Cuota Mensual</h3>
+            <div class="input-group">
+                <label>Importe Hipoteca (€)</label>
+                <input type="number" id="pHipo" value="120000" oninput="runCalcs()">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group"><label>Interés (%)</label><input type="number" id="pInt" value="3.5" step="0.1" oninput="runCalcs()"></div>
+                <div class="input-group"><label>Años</label><input type="number" id="pAnos" value="25" oninput="runCalcs()"></div>
+            </div>
+            <div class="res-box">
+                <p style="margin:0; font-size: 0.75rem;">Pago mensual estimado:</p>
+                <span class="res-valor" id="rCuota">600 €</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>3. El Contrato de Arras Seguro</h2>
+    <div class="consejo-box" style="text-align: center;">
+        <p style="font-weight: bold; font-size: 1.1rem; color: var(--oscuro);">📝 Generador de Contrato PuraLlave</p>
+        <p>Incluye cláusula hipotecaria, entrega de llaves y estado de cargas.</p>
+        <a href="generar-arras.html" class="btn-generador">✨ Crear mi Contrato ahora</a>
+    </div>
+
+    <h2>4. Cláusulas que no pueden faltar</h2>
+    <p>Asegúrate de incluir la cláusula de **financiación**, entrega **libre de inquilinos** y el **Certificado Energético** obligatorio.</p>
+
+    <div style="text-align: center; margin-top: 50px;">
+        <a href="https://www.notariado.org" target="_blank" style="color: var(--purpura); font-weight: bold;">Más información en el Portal del Notariado</a>
+    </div>
+</div>
+
+<script>
+    // LÓGICA MODO OSCURO GLOBAL
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    function runCalcs() {
+        const precio = parseFloat(document.getElementById('pPrecio').value) || 0;
+        document.getElementById('rGastos').innerText = (precio * 0.10).toLocaleString() + " €";
+
+        const capital = parseFloat(document.getElementById('pHipo').value) || 0;
+        const tasaAnual = parseFloat(document.getElementById('pInt').value) || 0;
+        const plazoAnos = parseFloat(document.getElementById('pAnos').value) || 0;
+
+        if (capital > 0 && tasaAnual > 0 && plazoAnos > 0) {
+            const i = (tasaAnual / 100) / 12;
+            const n = plazoAnos * 12;
+            const cuota = (capital * i) / (1 - Math.pow(1 + i, -n));
+            document.getElementById('rCuota').innerText = cuota.toLocaleString(undefined, {maximumFractionDigits: 0}) + " €";
+        }
+    }
+
+    window.onload = () => {
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btnDark').innerText = "☀️ Modo Claro";
+        }
+        runCalcs();
+    };
+</script>
+
+</body>
+</html>

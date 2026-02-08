@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Publicaciones - PuraLlave</title>
+    <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin:0; background: var(--fondo); color: var(--texto); transition: 0.3s; }
+        header { background: var(--blanco); padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .logo-wrapper { display: flex; align-items: center; text-decoration: none; }
+        .logo-icon { position: relative; width: 35px; height: 40px; margin-right: 10px; }
+        .casa-tejado { width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 13px solid var(--secundario); }
+        .casa-cuerpo { width: 28px; height: 22px; background: var(--secundario); margin: 0 auto; border-radius: 0 0 4px 4px; }
+        .txt-pura { font-size: 1.6rem; font-weight: 800; color: var(--primario); }
+        .txt-llave { font-size: 1.6rem; font-weight: 300; color: var(--secundario); }
+        .btn-login { background: transparent; color: var(--primario); border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-login:hover { background: var(--primario); color: white; }
+        .btn-perfil { background: var(--primario); color: white; border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-perfil:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-volver { background: var(--primario); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-volver:hover { opacity: 0.9; transform: translateY(-2px); }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .propiedad-header { display:flex; justify-content: space-between; align-items:center; margin-bottom: 25px; flex-wrap: wrap; }
+        .propiedad-titulo { margin: 0; font-size: 2rem; color: var(--primario); }
+        .propiedad-precio { font-size: 1.6rem; font-weight: 800; color: var(--secundario); margin-top: 10px; }
+        .propiedad-grid { display:flex; gap: 30px; flex-wrap: wrap; }
+        .propiedad-info { flex: 1; min-width: 300px; }
+        .info-section { margin-bottom: 20px; }
+        .info-item { display:flex; justify-content: space-between; margin-bottom: 5px; }
+        .info-label { font-weight: bold; }
+        .descripcion-box { background: var(--blanco); padding: 15px; border-radius: 12px; border:1px solid var(--borde); }
+        .contacto-section { background: var(--blanco); padding: 20px; border-radius: 12px; border:1px solid var(--borde); margin-bottom: 20px; }
+        .contacto-btn { background: var(--secundario); color: white; padding: 12px 25px; border-radius: 12px; font-weight: bold; border:none; cursor:pointer; transition:0.3s; }
+        .contacto-btn:hover { opacity:0.9; transform: translateY(-2px); }
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+    </style>
+</head>
+<body>
+
+    <button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <div class="casa-tejado"></div>
+                    <div class="casa-cuerpo"></div>
+                </div>
+                <div class="logo-texto">
+                    <span class="txt-pura">Pura</span><span class="txt-llave">Llave</span>
+                </div>
+            </div>
+            <div id="headerAuth"></div>
+        </div>
+    </header>
+
+    <div class="container" id="detallePropiedad"></div>
+
+<script>
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        document.getElementById('btnDark').innerText = body.classList.contains('dark-mode') ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    function verificarSesion() {
+        const user = JSON.parse(localStorage.getItem('usuarioSesion'));
+        const headerAuth = document.getElementById('headerAuth');
+        if(user) {
+            headerAuth.innerHTML = `<a href="perfil.html" class="btn-perfil">👤 Mi Perfil</a>`;
+        } else {
+            headerAuth.innerHTML = `<a href="login.html" class="btn-login">🔑 Acceso Usuarios</a>`;
+        }
+    }
+
+    function getTipoInmuebleTexto(tipo) {
+        const tipos = { 'piso':'Piso / Casa', 'habitacion':'Habitación','garaje':'Plaza de Garaje','trastero':'Trastero','nave':'Nave Industrial','local':'Local Comercial','terreno':'Terreno' };
+        return tipos[tipo] || tipo;
+    }
+
+    function formatearFecha(timestamp) {
+        const f = new Date(timestamp);
+        return f.toLocaleDateString('es-ES') + ' ' + f.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function contactarPropietario(alias) {
+        const propiedadId = localStorage.getItem('pisoActual');
+        if(!propiedadId) { alert('No se encontró información de la propiedad.'); return; }
+        window.location.href = `chat.html?propiedad=${propiedadId}&vendedorAlias=${alias}`;
+    }
+
+    function cargarAnuncioSeleccionado() {
+        const id = localStorage.getItem('pisoActual');
+        if(!id) { document.getElementById('detallePropiedad').innerHTML = "<p style='color:red;'>No se encontró el anuncio.</p>"; return; }
+
+        const anuncios = JSON.parse(localStorage.getItem('misAnuncios')) || [];
+        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+        const propiedad = anuncios.find(a => a.fecha == id);
+        if(!propiedad) { document.getElementById('detallePropiedad').innerHTML = "<p style='color:red;'>El anuncio no existe.</p>"; return; }
+
+        // Buscar alias del propietario
+        const propietario = usuarios.find(u => u.email === propiedad.duenoEmail);
+        const aliasPropietario = propietario ? propietario.alias : propiedad.duenoEmail;
+
+        const html = `
+            <div class="propiedad-header">
+                <h1 class="propiedad-titulo">${propiedad.titulo}</h1>
+                <div class="propiedad-precio">${Number(propiedad.precio).toLocaleString()} €${propiedad.tipoAnuncio==='alquilar'?'/mes':''}</div>
+            </div>
+            <div class="propiedad-grid">
+                <div class="propiedad-info">
+                    <div class="info-section">
+                        <h3>📍 Información General</h3>
+                        <div class="info-item"><span class="info-label">Tipo:</span><span>${getTipoInmuebleTexto(propiedad.tipo)}</span></div>
+                        <div class="info-item"><span class="info-label">Localidad:</span><span>${propiedad.localidad||'No especificada'}</span></div>
+                        <div class="info-item"><span class="info-label">Dimensiones:</span><span>${propiedad.dimensiones||'No especificada'} m²</span></div>
+                        ${propiedad.habitaciones?`<div class="info-item"><span class="info-label">Habitaciones:</span><span>${propiedad.habitaciones}</span></div>`:''}
+                        ${propiedad.banos?`<div class="info-item"><span class="info-label">Baños:</span><span>${propiedad.banos}</span></div>`:''}
+                        <div class="info-item"><span class="info-label">Propietario:</span><span>${aliasPropietario}</span></div>
+                        <div class="info-item"><span class="info-label">Publicado:</span><span>${formatearFecha(propiedad.fecha)}</span></div>
+                    </div>
+                    <div>
+                        <h3>📝 Descripción</h3>
+                        <div class="descripcion-box">${propiedad.descripcion||'<em>No hay descripción</em>'}</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="contacto-section">
+                        <h3>📞 Contactar Propietario</h3>
+                        <button class="contacto-btn" onclick="contactarPropietario('${aliasPropietario}')">💬 Enviar Mensaje</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('detallePropiedad').innerHTML = html;
+    }
+
+    window.onload = () => {
+        verificarSesion();
+        if(localStorage.getItem('darkMode')==='true'){ document.body.classList.add('dark-mode'); document.getElementById('btnDark').innerText="☀️ Modo Claro"; }
+        cargarAnuncioSeleccionado();
+    };
+</script>
+
+</body>
+</html>

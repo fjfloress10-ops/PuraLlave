@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Completo - PuraLlave</title>
+    <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--fondo); color: var(--texto); transition: 0.3s; }
+        
+        /* HEADER CON LOGO Y LOGIN */
+        header { background: var(--blanco); padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        
+        .logo-wrapper { display: flex; align-items: center; text-decoration: none; }
+        .logo-icon { position: relative; width: 35px; height: 40px; margin-right: 10px; }
+        .casa-tejado { width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 13px solid var(--secundario); }
+        .casa-cuerpo { width: 28px; height: 22px; background: var(--secundario); margin: 0 auto; border-radius: 0 0 4px 4px; }
+        .txt-pura { font-size: 1.6rem; font-weight: 800; color: var(--primario); }
+        .txt-llave { font-size: 1.6rem; font-weight: 300; color: var(--secundario); }
+
+        .btn-login { background: transparent; color: var(--primario); border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-login:hover { background: var(--primario); color: white; }
+        
+        .btn-perfil { background: var(--primario); color: white; border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-perfil:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        
+        .seccion-titulo { border-bottom: 3px solid var(--secundario); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; color: var(--primario); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .piso-card { background: var(--blanco); border-radius: 15px; overflow: hidden; margin-bottom: 25px; display: flex; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; position: relative; border: 1px solid var(--borde); }
+        .piso-card:hover { transform: scale(1.01); box-shadow: 0 10px 25px rgba(9, 132, 227, 0.15); border-color: var(--primario); }
+        
+        .badge { position: absolute; top: 15px; left: 15px; background: var(--secundario); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; z-index: 10; }
+        
+        .ref-badge { position: absolute; top: 15px; right: 15px; background: var(--primario); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; z-index: 10; }
+        
+        .piso-card img { width: 280px; height: 200px; object-fit: cover; background: #333; }
+        .info { padding: 25px; flex-grow: 1; }
+        .info h4 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--primario); }
+        .precio { color: var(--secundario); font-weight: 800; font-size: 1.5rem; margin-top: 10px; }
+        
+        .detalles { display: flex; gap: 15px; margin-top: 10px; font-size: 0.9rem; color: var(--texto); opacity: 0.8; }
+        .detalle-item { display: flex; align-items: center; gap: 5px; }
+        
+        .tipo-anuncio { background: rgba(9, 132, 227, 0.1); color: var(--primario); padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-top: 10px; display: inline-block; }
+        
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+
+        .filtros { background: var(--blanco); padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .filtros h3 { margin-top: 0; color: var(--primario); }
+        .filtro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .filtro-item label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--texto); opacity: 0.8; }
+        .filtro-item select { width: 100%; padding: 8px; border: 1px solid var(--borde); border-radius: 8px; background: var(--fondo); color: var(--texto); }
+
+        @media (max-width: 600px) { 
+            .piso-card { flex-direction: column; } 
+            .piso-card img { width: 100%; } 
+            .header-content { flex-direction: column; gap: 15px; }
+            .filtro-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+<header>
+    <div class="header-content">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="purallave.html" style="text-decoration: none; color: var(--primario); font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                🏠 Inicio
+            </a>
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <div class="casa-tejado"></div>
+                    <div class="casa-cuerpo"></div>
+                </div>
+                <div class="logo-texto">
+                    <span class="txt-pura">Pura</span><span class="txt-llave">Llave</span>
+                </div>
+            </div>
+        </div>
+        <!-- BOTÓN DE LOGIN O PERFIL -->
+        <div id="headerAuth"></div>
+    </div>
+</header>
+
+<div class="container">
+    <h2 class="seccion-titulo">CATÁLOGO COMPLETO</h2>
+    
+    <!-- Filtros -->
+    <div class="filtros">
+        <h3>Filtrar Resultados</h3>
+        <div class="filtro-grid">
+            <div class="filtro-item">
+                <label>Tipo de Inmueble</label>
+                <select id="filtroTipo" onchange="filtrarAnuncios()">
+                    <option value="">Todos los tipos</option>
+                    <option value="piso">Piso / Casa</option>
+                    <option value="habitacion">Habitación</option>
+                    <option value="garaje">Plaza de Garaje</option>
+                    <option value="trastero">Trastero</option>
+                    <option value="nave">Nave Industrial</option>
+                    <option value="local">Local Comercial</option>
+                    <option value="terreno">Terreno</option>
+                </select>
+            </div>
+            <div class="filtro-item">
+                <label>Tipo de Anuncio</label>
+                <select id="filtroAnuncio" onchange="filtrarAnuncios()">
+                    <option value="">Todos</option>
+                    <option value="vender">En Venta</option>
+                    <option value="alquilar">En Alquiler</option>
+                </select>
+            </div>
+            <div class="filtro-item">
+                <label>Localidad</label>
+                <select id="filtroLocalidad" onchange="filtrarAnuncios()">
+                    <option value="">Todas las localidades</option>
+                </select>
+            </div>
+            <div class="filtro-item">
+                <label>Ordenar por</label>
+                <select id="ordenarPor" onchange="ordenarAnuncios()">
+                    <option value="fecha-desc">Más recientes primero</option>
+                    <option value="fecha-asc">Más antiguos primero</option>
+                    <option value="precio-asc">Precio: Menor a Mayor</option>
+                    <option value="precio-desc">Precio: Mayor a Menor</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <div id="contenedorAnuncios"></div>
+    
+    <div id="mensajeVacio" style="text-align: center; padding: 50px; display: none;">
+        <h3 style="color: var(--texto); opacity: 0.6;">No se encontraron anuncios</h3>
+        <p style="color: var(--texto); opacity: 0.4;">Intenta ajustar los filtros para ver más resultados</p>
+    </div>
+</div>
+
+<script>
+    let todosLosAnuncios = [];
+    let anunciosFiltrados = [];
+
+    // MODO OSCURO
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    // Generar número de referencia único
+    function generarReferencia(index, fecha) {
+        const fechaStr = new Date(fecha).toISOString().slice(0, 10).replace(/-/g, '');
+        const numero = String(index + 1).padStart(4, '0');
+        return `REF-${fechaStr}-${numero}`;
+    }
+
+    // Obtener texto legible para el tipo de inmueble
+    function getTipoInmuebleTexto(tipo) {
+        const tipos = {
+            'piso': 'Piso / Casa',
+            'habitacion': 'Habitación',
+            'garaje': 'Plaza de Garaje',
+            'trastero': 'Trastero',
+            'nave': 'Nave Industrial',
+            'local': 'Local Comercial',
+            'terreno': 'Terreno'
+        };
+        return tipos[tipo] || tipo;
+    }
+
+    // Obtener texto legible para el tipo de anuncio
+    function getTipoAnuncioTexto(tipo) {
+        return tipo === 'vender' ? 'En Venta' : 'En Alquiler';
+    }
+
+    // Obtener alias del usuario
+    function getAliasUsuario(email) {
+        const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+        const usuario = usuarios.find(u => u.email === email);
+        return usuario ? usuario.alias || usuario.nombre : email;
+    }
+
+    // Cargar anuncios desde localStorage
+    function cargarAnuncios() {
+        const anuncios = JSON.parse(localStorage.getItem('misAnuncios')) || [];
+        
+        // Ordenar por fecha de creación (más recientes primero)
+        anuncios.sort((a, b) => b.fecha - a.fecha);
+        
+        // Agregar números de referencia
+        todosLosAnuncios = anuncios.map((anuncio, index) => ({
+            ...anuncio,
+            referencia: generarReferencia(index, anuncio.fecha)
+        }));
+        
+        anunciosFiltrados = [...todosLosAnuncios];
+        
+        // Cargar localidades para el filtro
+        cargarLocalidades();
+        
+        // Mostrar anuncios
+        mostrarAnuncios();
+    }
+
+    // Cargar localidades únicas para el filtro
+    function cargarLocalidades() {
+        const localidades = [...new Set(todosLosAnuncios.map(a => a.localidad).filter(l => l))];
+        const selectLocalidad = document.getElementById('filtroLocalidad');
+        
+        localidades.sort().forEach(localidad => {
+            const option = document.createElement('option');
+            option.value = localidad;
+            option.textContent = localidad;
+            selectLocalidad.appendChild(option);
+        });
+    }
+
+    // Mostrar anuncios en el contenedor
+    function mostrarAnuncios() {
+        const contenedor = document.getElementById('contenedorAnuncios');
+        const mensajeVacio = document.getElementById('mensajeVacio');
+        
+        if (anunciosFiltrados.length === 0) {
+            contenedor.innerHTML = '';
+            mensajeVacio.style.display = 'block';
+            return;
+        }
+        
+        mensajeVacio.style.display = 'none';
+        
+        contenedor.innerHTML = anunciosFiltrados.map(anuncio => `
+            <div class="piso-card" onclick="verDetalle('${anuncio.referencia}')">
+                <span class="badge">${getTipoInmuebleTexto(anuncio.tipo)}</span>
+                <span class="ref-badge">${anuncio.referencia}</span>
+                <img src="https://via.placeholder.com/280x200/cccccc/666666?text=Sin+Imagen" alt="${anuncio.titulo}">
+                <div class="info">
+                    <h4>${anuncio.titulo}</h4>
+                    <div class="detalles">
+                        <div class="detalle-item">📍 ${anuncio.localidad || 'Sin especificar'}</div>
+                        ${anuncio.dimensiones ? `<div class="detalle-item">📐 ${anuncio.dimensiones} m²</div>` : ''}
+                        ${anuncio.habitaciones ? `<div class="detalle-item">🛏️ ${anuncio.habitaciones}</div>` : ''}
+                        <div class="detalle-item">👤 Publicado por: ${getAliasUsuario(anuncio.duenoEmail)}</div>
+                    </div>
+                    <div class="tipo-anuncio">${getTipoAnuncioTexto(anuncio.tipoAnuncio)}</div>
+                    <div class="precio">${Number(anuncio.precio).toLocaleString()} €${anuncio.tipoAnuncio === 'alquilar' ? '/mes' : ''}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Filtrar anuncios
+    function filtrarAnuncios() {
+        const tipo = document.getElementById('filtroTipo').value;
+        const tipoAnuncio = document.getElementById('filtroAnuncio').value;
+        const localidad = document.getElementById('filtroLocalidad').value;
+        
+        anunciosFiltrados = todosLosAnuncios.filter(anuncio => {
+            const matchTipo = !tipo || anuncio.tipo === tipo;
+            const matchAnuncio = !tipoAnuncio || anuncio.tipoAnuncio === tipoAnuncio;
+            const matchLocalidad = !localidad || anuncio.localidad === localidad;
+            
+            return matchTipo && matchAnuncio && matchLocalidad;
+        });
+        
+        mostrarAnuncios();
+    }
+
+    // Ordenar anuncios
+    function ordenarAnuncios() {
+        const orden = document.getElementById('ordenarPor').value;
+        
+        switch(orden) {
+            case 'fecha-desc':
+                anunciosFiltrados.sort((a, b) => b.fecha - a.fecha);
+                break;
+            case 'fecha-asc':
+                anunciosFiltrados.sort((a, b) => a.fecha - b.fecha);
+                break;
+            case 'precio-asc':
+                anunciosFiltrados.sort((a, b) => Number(a.precio) - Number(b.precio));
+                break;
+            case 'precio-desc':
+                anunciosFiltrados.sort((a, b) => Number(b.precio) - Number(a.precio));
+                break;
+        }
+        
+        mostrarAnuncios();
+    }
+
+    // Ver detalle de un anuncio
+    function verDetalle(referencia) {
+        const anuncio = todosLosAnuncios.find(a => a.referencia === referencia);
+        if (anuncio) {
+            // Guardar el ID de la propiedad para la página de detalles
+            localStorage.setItem('pisoActual', anuncio.fecha);
+            
+            // Redirigir a la página de detalles
+            window.location.href = 'registrodepublicaciones.html';
+        }
+    }
+
+    // Verificar autenticación
+    function verificarAuth() {
+        const user = JSON.parse(localStorage.getItem('usuarioSesion'));
+        const headerAuth = document.getElementById('headerAuth');
+        
+        if (user) {
+            headerAuth.innerHTML = `
+                <a href="perfil.html" class="btn-perfil">👤 ${user.nombre}</a>
+            `;
+        } else {
+            headerAuth.innerHTML = `
+                <a href="login.html" class="btn-login">Iniciar Sesión</a>
+            `;
+        }
+    }
+
+    // CARGA INICIAL
+    window.onload = () => {
+        // 1. Configurar modo oscuro
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btnDark').innerText = "☀️ Modo Claro";
+        }
+        
+        // 2. Verificar autenticación
+        verificarAuth();
+        
+        // 3. Cargar anuncios
+        cargarAnuncios();
+    };
+</script>
+
+</body>
+</html>
