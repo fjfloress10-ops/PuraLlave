@@ -48,6 +48,7 @@
         
         .comprar { background: var(--primario); }
         .guia-btn { background: #6c5ce7; }
+        .guia-alquiler-btn { background: #fd79a8; }
         .vender { background: var(--secundario); }
         .btn:hover { transform: translateY(-3px); opacity: 0.9; }
 
@@ -93,6 +94,7 @@
         <div class="acciones">
             <button class="btn comprar" onclick="window.location.href='catalogo.html'">🔍 Ver Catálogo</button>
             <button class="btn guia-btn" onclick="irAGuia()">📖 Guía de Compra</button>
+            <button class="btn guia-alquiler-btn" onclick="irAGuiaAlquiler()">🏠 Guía de Alquiler</button>
             <button class="btn vender" onclick="irAVender()">🤝 Publicar</button>
         </div>
 
@@ -138,6 +140,17 @@
             return;
         }
         window.location.href = 'guia.html';
+    }
+
+    function irAGuiaAlquiler() {
+        const user = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if(!user) {
+            if(confirm('🔒 Debes iniciar sesión para acceder a la Guía de Alquiler.\n\n¿Quieres ir al login ahora?')) {
+                window.location.href = 'login.html';
+            }
+            return;
+        }
+        window.location.href = 'guia-alquiler.html';
     }
 
     function irAVender() {

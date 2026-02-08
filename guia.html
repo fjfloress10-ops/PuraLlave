@@ -45,7 +45,7 @@
         .btn-generador { background: var(--purpura); color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block; transition: 0.3s; }
         .btn-generador:hover { transform: translateY(-2px); opacity: 0.9; }
         
-        .btn-volver { display: inline-block; margin-bottom: 20px; color: var(--purpura); text-decoration: none; font-weight: bold; }
+        .btn-volver { position: fixed; top: 20px; left: 20px; padding: 10px 20px; background: var(--blanco); color: var(--primario); border: 2px solid var(--primario); border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s; }
         
         /* Botón Modo Oscuro Flotante */
         .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--purpura); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
@@ -73,7 +73,7 @@
         <div class="calc-card">
             <h3>💰 Gastos de Compra</h3>
             <div class="input-group">
-                <label>Precio de la vivienda (€)</label>
+                <label>Precio del inmueble (€)</label>
                 <input type="number" id="pPrecio" value="150000" oninput="runCalcs()">
             </div>
             <div class="res-box">

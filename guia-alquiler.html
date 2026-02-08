@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Alquiler - PuraLlave</title>
+    <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--fondo); color: var(--texto); transition: 0.3s; line-height: 1.6; }
+        
+        .btn-volver { position: fixed; top: 20px; left: 20px; padding: 10px 20px; background: var(--blanco); color: var(--primario); border: 2px solid var(--primario); border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        header { background: var(--blanco); padding: 40px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 40px; }
+        header h1 { color: var(--primario); margin: 0; font-size: 2.5rem; }
+        header p { color: var(--texto); opacity: 0.8; margin: 10px 0 0 0; font-size: 1.1rem; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        h2 { color: var(--primario); border-bottom: 3px solid var(--secundario); padding-bottom: 10px; margin: 40px 0 20px 0; }
+        
+        .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0; }
+        .calc-card { background: var(--blanco); padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .calc-card h3 { margin-top: 0; color: var(--primario); }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--texto); }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid var(--borde); border-radius: 8px; font-size: 1rem; }
+        
+        .res-box { background: var(--fondo); padding: 15px; border-radius: 10px; text-align: center; margin-top: 15px; }
+        .res-valor { font-size: 1.5rem; font-weight: bold; color: var(--secundario); display: block; margin-top: 5px; }
+
+        .alerta { background: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; }
+        .alerta h4 { margin: 0 0 10px 0; color: #856404; }
+        .alerta p { margin: 0; color: #856404; }
+
+        .checklist { background: var(--blanco); padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .checklist h3 { color: var(--primario); margin-top: 0; }
+        .checklist ul { list-style: none; padding: 0; }
+        .checklist li { padding: 10px 0; border-bottom: 1px solid var(--borde); }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist li:before { content: "✓"; color: var(--secundario); font-weight: bold; margin-right: 10px; }
+
+        @media (max-width: 768px) {
+            .calc-wrapper { grid-template-columns: 1fr; }
+            header h1 { font-size: 2rem; }
+            .container { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+<header>
+    <h1>Guía de Alquiler Inteligente</h1>
+    <p>Todo lo que necesitas saber para alquilar sin intermediarios</p>
+</header>
+
+<div class="container">
+    <a href="index.html" class="btn-volver">← Volver a PuraLlave</a>
+
+    <h2>1. 📋 Documentación Necesaria</h2>
+    <div class="checklist">
+        <h3>Requisitos para el Inquilino:</h3>
+        <ul>
+            <li>DNI o NIE en vigor</li>
+            <li>Justificante de ingresos (nóminas, contrato de trabajo)</li>
+            <li>Última declaración de la renta</li>
+            <li>Contrato de seguro de hogar (obligatorio)</li>
+            <li>Aval bancario o garantía adicional (si se requiere)</li>
+        </ul>
+    </div>
+
+    <h2>2. 💰 Calculadora de Alquiler</h2>
+    <div class="calc-wrapper">
+        <div class="calc-card">
+            <h3>🏠 Cuota Mensual</h3>
+            <div class="input-group">
+                <label>Precio del alquiler (€/mes)</label>
+                <input type="number" id="alquilerMensual" value="800" oninput="calcularAlquiler()">
+            </div>
+            <div class="input-group">
+                <label>Comunidad (€/mes)</label>
+                <input type="number" id="comunidad" value="50" oninput="calcularAlquiler()">
+            </div>
+            <div class="input-group">
+                <label>IBI (Impuesto Bienes Inmuebles) €/año</label>
+                <input type="number" id="ibi" value="300" oninput="calcularAlquiler()">
+            </div>
+            <div class="input-group">
+                <label>Seguro de hogar (€/mes)</label>
+                <input type="number" id="seguro" value="20" oninput="calcularAlquiler()">
+            </div>
+            <div class="res-box">
+                <p style="margin:0; font-size: 0.75rem;">Total mensual:</p>
+                <span class="res-valor" id="totalMensual">890 €</span>
+            </div>
+        </div>
+
+        <div class="calc-card">
+            <h3>📊 Capacidad Económica</h3>
+            <div class="input-group">
+                <label>Ingresos mensuales netos (€)</label>
+                <input type="number" id="ingresos" value="1500" oninput="calcularAlquiler()">
+            </div>
+            <div class="input-group">
+                <label>Otros gastos fijos mensuales (€)</label>
+                <input type="number" id="gastosFijos" value="300" oninput="calcularAlquiler()">
+            </div>
+            <div class="res-box">
+                <p style="margin:0; font-size: 0.75rem;">Disponible para alquiler:</p>
+                <span class="res-valor" id="disponible">1200 €</span>
+            </div>
+            <div class="res-box">
+                <p style="margin:0; font-size: 0.75rem;">% de ingresos destinados:</p>
+                <span class="res-valor" id="porcentaje">59%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="alerta">
+        <h4>⚠️ Recomendación Financiera</h4>
+        <p>Los expertos recomiendan que el gasto en vivienda no supere el 30-35% de los ingresos mensuales. Si superas el 40%, considera buscar opciones más económicas.</p>
+    </div>
+
+    <h2>3. 📝 Contrato de Alquiler</h2>
+    <div class="checklist">
+        <h3>Cláusulas Imprescindibles:</h3>
+        <ul>
+            <li>Identificación completa de propietario e inquilino</li>
+            <li>Descripción detallada del inmueble</li>
+            <li>Duración del contrato (mínimo 1 año, prorrogable)</li>
+            <li>Cantidad exacta de la renta y forma de pago</li>
+            <li>Fianza (máximo 1 mes de renta)</li>
+            <li>Gastos de comunidad y quién los asume</li>
+            <li>Permisos para obras o modificaciones</li>
+            <li>Causas de resolución del contrato</li>
+        </ul>
+    </div>
+
+    <h2>4. 🔍 Verificación del Propietario</h2>
+    <div class="checklist">
+        <h3>Antes de Firmar:</h3>
+        <ul>
+            <li>Solicitar DNI del propietario</li>
+            <li>Verificar que sea el titular registral (Nota Simple)</li>
+            <li>Comprobar que no haya cargas o embargos</li>
+            <li>Solicitar última recibo del IBI</li>
+            <li>Verificar certificado de eficiencia energética</li>
+            <li>Confirmar que no haya deudas de comunidad</li>
+        </ul>
+    </div>
+
+    <h2>5. 💡 Consejos Prácticos</h2>
+    <div class="checklist">
+        <h3>Para una Buena Experiencia:</h3>
+        <ul>
+            <li>Visita el inmueble en diferentes momentos del día</li>
+            <li>Fotografía el estado inicial del inmueble</li>
+            <li>Conserva todos los recibos y comprobantes</li>
+            <li>Comunica cualquier incidencia por escrito</li>
+            <li>Realiza inventario detallado al entrar y salir</li>
+            <li>Verifica que todos los electrodomésticos funcionen</li>
+            <li>Confirma la cobertura de señal móvil e internet</li>
+        </ul>
+    </div>
+
+    <h2>6. 🚨 Señales de Alerta</h2>
+    <div class="alerta">
+        <h4>⚠️ Desconfía si:</h4>
+        <p>• El propietario se niega a mostrar documentación<br>
+           • Pide adelantar varias mensualidades sin contrato<br>
+           • Presiona para firmar sin tiempo de lectura<br>
+           • No quiere dejar contrato por escrito<br>
+           • Las condiciones parecen demasiado buenas para ser verdad</p>
+    </div>
+</div>
+
+<script>
+function toggleDarkMode() {
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+    document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+}
+
+function calcularAlquiler() {
+    const alquiler = parseFloat(document.getElementById('alquilerMensual').value) || 0;
+    const comunidad = parseFloat(document.getElementById('comunidad').value) || 0;
+    const ibi = parseFloat(document.getElementById('ibi').value) || 0;
+    const seguro = parseFloat(document.getElementById('seguro').value) || 0;
+    const ingresos = parseFloat(document.getElementById('ingresos').value) || 0;
+    const gastosFijos = parseFloat(document.getElementById('gastosFijos').value) || 0;
+    
+    const totalMensual = alquiler + comunidad + (ibi/12) + seguro;
+    const disponible = ingresos - gastosFijos;
+    const porcentaje = ingresos > 0 ? (totalMensual / ingresos * 100) : 0;
+    
+    document.getElementById('totalMensual').textContent = totalMensual.toFixed(0) + ' €';
+    document.getElementById('disponible').textContent = disponible.toFixed(0) + ' €';
+    document.getElementById('porcentaje').textContent = porcentaje.toFixed(0) + '%';
+    
+    // Cambiar color según porcentaje
+    const porcentajeElement = document.getElementById('porcentaje');
+    if (porcentaje <= 35) {
+        porcentajeElement.style.color = 'var(--secundario)';
+    } else if (porcentaje <= 50) {
+        porcentajeElement.style.color = '#ffc107';
+    } else {
+        porcentajeElement.style.color = '#dc3545';
+    }
+}
+
+window.addEventListener('load', () => {
+    if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark-mode');
+    calcularAlquiler();
+});
+</script>
+
+</body>
+</html>
