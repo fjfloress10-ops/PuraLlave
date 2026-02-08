@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Favoritos - PuraLlave</title>
+    <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--fondo); color: var(--texto); transition: 0.3s; }
+        
+        /* HEADER CON LOGO Y LOGIN */
+        header { background: var(--blanco); padding: 15px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-content { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        
+        .logo-wrapper { display: flex; align-items: center; text-decoration: none; }
+        .logo-icon { position: relative; width: 35px; height: 40px; margin-right: 10px; }
+        .casa-tejado { width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 13px solid var(--secundario); }
+        .casa-cuerpo { width: 28px; height: 22px; background: var(--secundario); margin: 0 auto; border-radius: 0 0 4px 4px; }
+        .txt-pura { font-size: 1.6rem; font-weight: 800; color: var(--primario); }
+        .txt-llave { font-size: 1.6rem; font-weight: 300; color: var(--secundario); }
+
+        .btn-login { background: transparent; color: var(--primario); border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-login:hover { background: var(--primario); color: white; }
+        
+        .btn-perfil { background: var(--primario); color: white; border: 2px solid var(--primario); padding: 8px 18px; border-radius: 8px; font-weight: bold; text-decoration: none; transition: 0.3s; }
+        .btn-perfil:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        
+        .seccion-titulo { border-bottom: 3px solid var(--secundario); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; color: var(--primario); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .piso-card { background: var(--blanco); border-radius: 15px; overflow: hidden; margin-bottom: 25px; display: flex; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; position: relative; border: 1px solid var(--borde); }
+        .piso-card:hover { transform: scale(1.01); box-shadow: 0 10px 25px rgba(9, 132, 227, 0.15); border-color: var(--primario); }
+        
+        .badge { position: absolute; top: 15px; left: 15px; background: var(--secundario); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; z-index: 10; }
+        
+        .btn-favorito { position: absolute; bottom: 15px; right: 15px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; z-index: 10; display: flex; align-items: center; justify-content: center; }
+        .btn-favorito:hover { background: white; transform: scale(1.1); }
+        .btn-favorito.activo { color: #e74c3c; background: white; }
+        
+        .piso-card img { width: 280px; height: 200px; object-fit: cover; background: #333; }
+        .info { padding: 25px; flex-grow: 1; }
+        .info h4 { margin: 0 0 10px 0; font-size: 1.4rem; color: var(--primario); }
+        .precio { color: var(--secundario); font-weight: 800; font-size: 1.5rem; margin-top: 10px; }
+        
+        .fecha-favorito { font-size: 0.8rem; color: var(--texto); opacity: 0.6; margin-top: 5px; }
+        
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+
+        .mensaje-vacio { text-align: center; padding: 60px 20px; color: var(--texto); opacity: 0.6; }
+        .mensaje-vacio h3 { font-size: 1.5rem; margin-bottom: 10px; }
+        .mensaje-vacio p { font-size: 1rem; }
+
+        @media (max-width: 600px) { .piso-card { flex-direction: column; } .piso-card img { width: 100%; } .header-content { flex-direction: column; gap: 15px; } }
+    </style>
+</head>
+<body>
+
+    <button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <div class="casa-tejado"></div>
+                    <div class="casa-cuerpo"></div>
+                </div>
+                <div class="logo-texto">
+                    <span class="txt-pura">Pura</span><span class="txt-llave">Llave</span>
+                </div>
+            </div>
+            <!-- BOTÓN DE LOGIN O PERFIL -->
+            <div id="headerAuth"></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="seccion-titulo">❤️ MIS FAVORITOS</h2>
+        
+        <div id="contenedorFavoritos"></div>
+        
+        <div id="mensajeVacio" class="mensaje-vacio" style="display: none;">
+            <h3>🏠 Todavía no tienes favoritos</h3>
+            <p>Explora los anuncios y guarda los que más te gusten haciendo clic en el botón ❤️</p>
+            <p>
+                <button onclick="window.location.href='/index.html'" style="background: var(--primario); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 15px;">
+                    🔍 Explorar Anuncios
+                </button>
+            </p>
+        </div>
+    </div>
+
+<script>
+    let usuarioActual = null;
+
+    function toggleDarkMode() {
+        const body = document.body;
+        body.classList.toggle('dark-mode');
+        const isDark = body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+    }
+
+    // VERIFICAR SI HAY SESIÓN
+    function verificarSesion() {
+        const user = JSON.parse(localStorage.getItem('usuarioSesion'));
+        const headerAuth = document.getElementById('headerAuth');
+        
+        if(user) {
+            usuarioActual = user;
+            // Usuario logueado - mostrar botón de perfil
+            headerAuth.innerHTML = `<a href="perfil.html" class="btn-perfil">👤 Mi Perfil</a>`;
+        } else {
+            // No hay sesión - redirigir al login
+            alert('🔒 Debes iniciar sesión para ver tus favoritos.');
+            window.location.href = 'login.html';
+            return;
+        }
+    }
+
+    // CARGAR FAVORITOS
+    function cargarFavoritos() {
+        const contenedor = document.getElementById('contenedorFavoritos');
+        const mensajeVacio = document.getElementById('mensajeVacio');
+        
+        if (!usuarioActual) return;
+        
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        const favoritosUsuario = favoritos.filter(f => f.usuarioEmail === usuarioActual.email);
+        
+        if (favoritosUsuario.length === 0) {
+            contenedor.innerHTML = '';
+            mensajeVacio.style.display = 'block';
+            return;
+        }
+        
+        mensajeVacio.style.display = 'none';
+        
+        // Ordenar por fecha de agregado (más recientes primero)
+        favoritosUsuario.sort((a, b) => b.fechaAgregado - a.fechaAgregado);
+        
+        contenedor.innerHTML = favoritosUsuario.map(fav => {
+            const anuncio = fav.anuncio;
+            const fechaAgregado = new Date(fav.fechaAgregado).toLocaleDateString('es-ES');
+            
+            return `
+                <div class="piso-card">
+                    <div class="badge">${anuncio.tipo === 'garaje' ? '🅿️ GARAJE' : '🏠 PARTICULAR'}</div>
+                    <button class="btn-favorito activo" onclick="eliminarFavorito(event, ${anuncio.fecha})" title="Eliminar de favoritos">
+                        ❤️
+                    </button>
+                    <img src="https://images.unsplash.com" alt="${anuncio.titulo}" onclick="verDetalle(${anuncio.fecha})">
+                    <div class="info" onclick="verDetalle(${anuncio.fecha})">
+                        <h4>${anuncio.titulo}</h4>
+                        <p>✨ Trato directo • Sin comisiones</p>
+                        <p>${anuncio.dimensiones ? anuncio.dimensiones + ' m²' : ''} ${anuncio.habitaciones ? ' • ' + anuncio.habitaciones : ''}</p>
+                        <p class="precio">${Number(anuncio.precio).toLocaleString()} €</p>
+                        <p class="fecha-favorito">❤️ Guardado el ${fechaAgregado}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ELIMINAR FAVORITO
+    function eliminarFavorito(event, anuncioId) {
+        event.stopPropagation();
+        
+        if (!confirm('💔 ¿Estás seguro de que quieres eliminar este anuncio de tus favoritos?')) {
+            return;
+        }
+        
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        const index = favoritos.findIndex(f => f.usuarioEmail === usuarioActual.email && f.anuncioId === anuncioId);
+        
+        if (index !== -1) {
+            favoritos.splice(index, 1);
+            localStorage.setItem('favoritos', JSON.stringify(favoritos));
+            alert('💔 Eliminado de favoritos');
+            cargarFavoritos(); // Recargar la lista
+        }
+    }
+
+    // VER DETALLE
+    function verDetalle(id) {
+        localStorage.setItem('pisoActual', id);
+        window.location.href = "registrodepublicaciones.html";
+    }
+
+    window.onload = () => {
+        verificarSesion();
+        
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('btnDark').innerText = "☀️ Modo Claro";
+        }
+        
+        cargarFavoritos();
+    };
+</script>
+
+</body>
+</html>

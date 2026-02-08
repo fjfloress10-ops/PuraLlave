@@ -336,7 +336,7 @@
 <button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
 
 <div class="nav-perfil">
-<a href="purallave.html" style="text-decoration: none; color: var(--primario); font-weight: bold; display: flex; align-items: center; gap: 8px;">
+<a href="/index.html" style="text-decoration: none; color: var(--primario); font-weight: bold; display: flex; align-items: center; gap: 8px;">
     🏠 Inicio
 </a>
 
@@ -399,7 +399,7 @@ let usuarioActual=null;
 
 function cargarDatosUsuario(){
 const user=JSON.parse(localStorage.getItem("usuarioSesion"));
-if(!user){location.href="login.html";return;}
+if(!user){location.href="/index.html";return;}
 usuarioActual=user;
 verNombre.textContent=user.nombre||"-";
 verAlias.textContent=user.alias||"-";
@@ -500,7 +500,7 @@ function eliminarCuenta() {
     localStorage.removeItem('usuarioSesion');
     
     alert('✅ Cuenta eliminada correctamente. Todos tus datos han sido borrados.');
-    window.location.href = 'purallave.html';
+    window.location.href = "/index.html";
 }
 
 window.onload=()=>{
@@ -516,7 +516,7 @@ contadorMensajes.textContent=(JSON.parse(localStorage.getItem("mensajes"))||[]).
 function irAFavoritos(){location.href="favoritos.html";}
 function irAChat(){location.href="chat.html";}
 function irAPublicar(){location.href="publicar.html";}
-function cerrarSesion(){localStorage.removeItem("usuarioSesion");location.href="purallave.html";}
+function cerrarSesion(){localStorage.removeItem("usuarioSesion");location.href="/index.html";}
 
 </script>
 

@@ -65,6 +65,10 @@
         
         .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
 
+        .btn-favorito { position: absolute; bottom: 15px; right: 15px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; z-index: 10; display: flex; align-items: center; justify-content: center; }
+        .btn-favorito:hover { background: white; transform: scale(1.1); }
+        .btn-favorito.activo { color: #e74c3c; background: white; }
+
         .filtros { background: var(--blanco); padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .filtros h3 { margin-top: 0; color: var(--primario); }
         .filtro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
@@ -86,7 +90,7 @@
 <header>
     <div class="header-content">
         <div style="display: flex; align-items: center; gap: 20px;">
-            <a href="purallave.html" style="text-decoration: none; color: var(--primario); font-weight: bold; display: flex; align-items: center; gap: 8px;">
+            <a href="/index.html" style="text-decoration: none; color: var(--primario); font-weight: bold; display: flex; align-items: center; gap: 8px;">
                 🏠 Inicio
             </a>
             <div class="logo-wrapper">
@@ -252,12 +256,17 @@
         
         mensajeVacio.style.display = 'none';
         
-        contenedor.innerHTML = anunciosFiltrados.map(anuncio => `
-            <div class="piso-card" onclick="verDetalle('${anuncio.referencia}')">
+        contenedor.innerHTML = anunciosFiltrados.map(anuncio => {
+            const esFavorito = verificarFavorito(anuncio.fecha);
+            return `
+            <div class="piso-card">
                 <span class="badge">${getTipoInmuebleTexto(anuncio.tipo)}</span>
                 <span class="ref-badge">${anuncio.referencia}</span>
-                <img src="https://via.placeholder.com/280x200/cccccc/666666?text=Sin+Imagen" alt="${anuncio.titulo}">
-                <div class="info">
+                <button class="btn-favorito ${esFavorito ? 'activo' : ''}" onclick="toggleFavorito(event, ${anuncio.fecha})" title="Añadir a favoritos">
+                    ${esFavorito ? '❤️' : '🤍'}
+                </button>
+                <img src="https://via.placeholder.com/280x200/cccccc/666666?text=Sin+Imagen" alt="${anuncio.titulo}" onclick="verDetalle('${anuncio.referencia}')">
+                <div class="info" onclick="verDetalle('${anuncio.referencia}')">
                     <h4>${anuncio.titulo}</h4>
                     <div class="detalles">
                         <div class="detalle-item">📍 ${anuncio.localidad || 'Sin especificar'}</div>
@@ -268,8 +277,8 @@
                     <div class="tipo-anuncio">${getTipoAnuncioTexto(anuncio.tipoAnuncio)}</div>
                     <div class="precio">${Number(anuncio.precio).toLocaleString()} €${anuncio.tipoAnuncio === 'alquilar' ? '/mes' : ''}</div>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     // Filtrar anuncios
@@ -336,6 +345,60 @@
             headerAuth.innerHTML = `
                 <a href="login.html" class="btn-login">Iniciar Sesión</a>
             `;
+        }
+    }
+
+    // FUNCIONES DE FAVORITOS
+    function verificarFavorito(anuncioId) {
+        const usuario = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if (!usuario) return false;
+        
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        return favoritos.some(f => f.usuarioEmail === usuario.email && f.anuncioId === anuncioId);
+    }
+
+    function toggleFavorito(event, anuncioId) {
+        event.stopPropagation();
+        
+        const usuario = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if (!usuario) {
+            if (confirm('🔒 Debes iniciar sesión para añadir favoritos.\n\n¿Quieres ir al login ahora?')) {
+                window.location.href = 'login.html';
+            }
+            return;
+        }
+
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        const index = favoritos.findIndex(f => f.usuarioEmail === usuario.email && f.anuncioId === anuncioId);
+        
+        if (index === -1) {
+            // Añadir a favoritos
+            const anuncio = todosLosAnuncios.find(a => a.fecha == anuncioId);
+            if (anuncio) {
+                favoritos.push({
+                    usuarioEmail: usuario.email,
+                    anuncioId: anuncioId,
+                    anuncio: anuncio,
+                    fechaAgregado: new Date().getTime()
+                });
+                alert('❤️ ¡Añadido a favoritos!');
+            }
+        } else {
+            // Eliminar de favoritos
+            favoritos.splice(index, 1);
+            alert('💔 Eliminado de favoritos');
+        }
+        
+        localStorage.setItem('favoritos', JSON.stringify(favoritos));
+        
+        // Actualizar el botón
+        const btn = event.target;
+        if (favoritos.some(f => f.usuarioEmail === usuario.email && f.anuncioId === anuncioId)) {
+            btn.classList.add('activo');
+            btn.innerHTML = '❤️';
+        } else {
+            btn.classList.remove('activo');
+            btn.innerHTML = '🤍';
         }
     }
 

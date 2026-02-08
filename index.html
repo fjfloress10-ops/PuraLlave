@@ -62,6 +62,10 @@
         
         .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
 
+        .btn-favorito { position: absolute; bottom: 15px; right: 15px; background: rgba(255, 255, 255, 0.9); border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; z-index: 10; display: flex; align-items: center; justify-content: center; }
+        .btn-favorito:hover { background: white; transform: scale(1.1); }
+        .btn-favorito.activo { color: #e74c3c; background: white; }
+
         @media (max-width: 600px) { .piso-card { flex-direction: column; } .piso-card img { width: 100%; } .header-content { flex-direction: column; gap: 15px; } }
     </style>
 </head>
@@ -148,6 +152,7 @@
             document.getElementById('btnDark').innerText = "☀️ Modo Claro";
         }
         cargarAnuncios(5);
+        actualizarContadorFavoritos();
     };
 
     function cargarAnuncios(limite = 5) {
@@ -163,18 +168,23 @@
         const listaAMostrar = limite > 0 ? anuncios.slice(0, limite) : anuncios;
         titulo.innerText = limite > 0 ? "AÑADIDOS RECIENTEMENTE" : "CATÁLOGO COMPLETO";
 
-        contenedor.innerHTML = listaAMostrar.map((piso, index) => `
-            <div class="piso-card" onclick="verDetalle(${piso.fecha})">
+        contenedor.innerHTML = listaAMostrar.map((piso, index) => {
+            const esFavorito = verificarFavorito(piso.fecha);
+            return `
+            <div class="piso-card">
                 <div class="badge">${piso.tipo === 'garaje' ? '🅿️ GARAJE' : '🏠 PARTICULAR'}</div>
-                <img src="https://images.unsplash.com" alt="Inmueble">
-                <div class="info">
+                <button class="btn-favorito ${esFavorito ? 'activo' : ''}" onclick="toggleFavorito(event, ${piso.fecha})" title="Añadir a favoritos">
+                    ${esFavorito ? '❤️' : '🤍'}
+                </button>
+                <img src="https://images.unsplash.com" alt="Inmueble" onclick="verDetalle(${piso.fecha})">
+                <div class="info" onclick="verDetalle(${piso.fecha})">
                     <h4>${piso.titulo}</h4>
                     <p>✨ Trato directo • Sin comisiones</p>
                     <p>${piso.dimensiones ? piso.dimensiones + ' m²' : ''} ${piso.habitaciones ? ' • ' + piso.habitaciones : ''}</p>
                     <p class="precio">${Number(piso.precio).toLocaleString()} €</p>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     function verDetalle(id) {
@@ -185,6 +195,77 @@
     function mostrarTodos() {
         cargarAnuncios(0);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // FUNCIONES DE FAVORITOS
+    function verificarFavorito(anuncioId) {
+        const usuario = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if (!usuario) return false;
+        
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        return favoritos.some(f => f.usuarioEmail === usuario.email && f.anuncioId === anuncioId);
+    }
+
+    function toggleFavorito(event, anuncioId) {
+        event.stopPropagation();
+        
+        const usuario = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if (!usuario) {
+            if (confirm('🔒 Debes iniciar sesión para añadir favoritos.\n\n¿Quieres ir al login ahora?')) {
+                window.location.href = 'login.html';
+            }
+            return;
+        }
+
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        const index = favoritos.findIndex(f => f.usuarioEmail === usuario.email && f.anuncioId === anuncioId);
+        
+        if (index === -1) {
+            // Añadir a favoritos
+            const anuncio = JSON.parse(localStorage.getItem('misAnuncios')).find(a => a.fecha == anuncioId);
+            if (anuncio) {
+                favoritos.push({
+                    usuarioEmail: usuario.email,
+                    anuncioId: anuncioId,
+                    anuncio: anuncio,
+                    fechaAgregado: new Date().getTime()
+                });
+                alert('❤️ ¡Añadido a favoritos!');
+            }
+        } else {
+            // Eliminar de favoritos
+            favoritos.splice(index, 1);
+            alert('💔 Eliminado de favoritos');
+        }
+        
+        localStorage.setItem('favoritos', JSON.stringify(favoritos));
+        
+        // Actualizar el botón
+        const btn = event.target;
+        if (favoritos.some(f => f.usuarioEmail === usuario.email && f.anuncioId === anuncioId)) {
+            btn.classList.add('activo');
+            btn.innerHTML = '❤️';
+        } else {
+            btn.classList.remove('activo');
+            btn.innerHTML = '🤍';
+        }
+        
+        // Actualizar contador en el perfil
+        actualizarContadorFavoritos();
+    }
+
+    function actualizarContadorFavoritos() {
+        const usuario = JSON.parse(localStorage.getItem('usuarioSesion'));
+        if (!usuario) return;
+        
+        const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+        const contador = favoritos.filter(f => f.usuarioEmail === usuario.email).length;
+        
+        // Actualizar contador si existe en el perfil
+        const contadorElement = document.getElementById('contadorFavoritos');
+        if (contadorElement) {
+            contadorElement.textContent = contador;
+        }
     }
 </script>
 
