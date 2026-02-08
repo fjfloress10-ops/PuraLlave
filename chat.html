@@ -146,10 +146,10 @@
         const user = JSON.parse(localStorage.getItem('usuarioSesion'));
         const headerAuth = document.getElementById('headerAuth');
         if (user) {
-            headerAuth.innerHTML = `<button class="btn-volver" onclick="window.location.href='/index.html'">← Volver</button>
+            headerAuth.innerHTML = `<button class="btn-volver" onclick="window.location.href='index.html'">← Volver</button>
                 <a href="perfil.html" class="btn-perfil">👤 ${user.nombre}</a>`;
         } else {
-            headerAuth.innerHTML = `<button class="btn-volver" onclick="window.location.href='/index.html'">← Volver</button>
+            headerAuth.innerHTML = `<button class="btn-volver" onclick="window.location.href='index.html'">← Volver</button>
                 <a href="login.html" class="btn-login">Iniciar Sesión</a>`;
         }
     }
