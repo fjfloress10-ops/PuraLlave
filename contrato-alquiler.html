@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Contrato de Alquiler - PuraLlave</title>
+    <style>
+        :root {
+            --primario: #0984e3; 
+            --secundario: #00b894; 
+            --fondo: #f1f7f9;
+            --blanco: #ffffff;
+            --texto: #2d3436;
+            --borde: #dfe6e9;
+        }
+
+        body.dark-mode {
+            --fondo: #0f172a;
+            --blanco: #1e293b;
+            --texto: #f1f2f6;
+            --primario: #3498db;
+            --secundario: #55efc4;
+            --borde: #334155;
+        }
+
+        body { font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; background: var(--fondo); color: var(--texto); transition: 0.3s; line-height: 1.6; }
+        
+        .btn-volver { position: fixed; top: 20px; left: 20px; padding: 10px 20px; background: var(--blanco); color: var(--primario); border: 2px solid var(--primario); border-radius: 50px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-dark-mode { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; border: none; cursor: pointer; background: var(--primario); color: white; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        header { background: var(--blanco); padding: 40px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 40px; }
+        header h1 { color: var(--primario); margin: 0; font-size: 2.5rem; }
+        header p { color: var(--texto); opacity: 0.8; margin: 10px 0 0 0; font-size: 1.1rem; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        .formulario { background: var(--blanco); padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .formulario h2 { color: var(--primario); margin-top: 0; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--texto); }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid var(--borde); 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            background: var(--fondo); 
+            color: var(--texto);
+            box-sizing: border-box;
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .btn-generar { background: linear-gradient(135deg, var(--primario), var(--secundario)); color: white; padding: 16px 30px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .btn-generar:hover { transform: translateY(-2px); opacity: 0.9; }
+        
+        .contrato-preview { background: var(--blanco); padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 30px; display: none; }
+        .contrato-preview h3 { color: var(--primario); text-align: center; margin-bottom: 30px; }
+        
+        .contrato-content { 
+            background: #fafafa; 
+            padding: 40px; 
+            border: 1px solid var(--borde); 
+            border-radius: 8px; 
+            font-family: 'Times New Roman', serif;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .btn-imprimir { background: var(--secundario); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin: 20px auto; display: block; }
+        .btn-imprimir:hover { opacity: 0.9; }
+
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            header h1 { font-size: 2rem; }
+            .container { padding: 10px; }
+            .formulario { padding: 20px; }
+            .contrato-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<button onclick="toggleDarkMode()" class="btn-dark-mode" id="btnDark">🌙 Modo Oscuro</button>
+
+<header>
+    <h1>Generador de Contrato de Alquiler</h1>
+    <p>Crea tu contrato de alquiler personalizado entre particulares</p>
+</header>
+
+<div class="container">
+    <a href="guia-alquiler.html" class="btn-volver">← Volver a Guía de Alquiler</a>
+
+    <div class="formulario">
+        <h2>📝 Datos del Contrato</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Ciudad</label>
+                <input type="text" id="ciudad" placeholder="Ej: Madrid">
+            </div>
+            <div class="form-group">
+                <label>Fecha del Contrato</label>
+                <input type="date" id="fecha">
+            </div>
+        </div>
+
+        <h3>🏠 Datos del Inmueble</h3>
+        <div class="form-group">
+            <label>Dirección completa</label>
+            <input type="text" id="direccion" placeholder="Calle Ejemplo, 123, 4ºA">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Superficie (m²)</label>
+                <input type="number" id="superficie" placeholder="80">
+            </div>
+            <div class="form-group">
+                <label>Habitaciones</label>
+                <input type="number" id="habitaciones" placeholder="3">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Descripción adicional</label>
+            <textarea id="descripcion" placeholder="Piso exterior con balcón, suelo de parquet, cocina equipada..."></textarea>
+        </div>
+
+        <h3>👤 Datos del Propietario (Parte Arrendador)</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="propietarioNombre" placeholder="Juan Pérez García">
+            </div>
+            <div class="form-group">
+                <label>DNI/NIE</label>
+                <input type="text" id="propietarioDni" placeholder="12345678A">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Dirección del propietario</label>
+            <input type="text" id="propietarioDireccion" placeholder="Calle Propietario, 456">
+        </div>
+
+        <h3>👤 Datos del Inquilino (Parte Arrendatario)</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="inquilinoNombre" placeholder="María López Martínez">
+            </div>
+            <div class="form-group">
+                <label>DNI/NIE</label>
+                <input type="text" id="inquilinoDni" placeholder="87654321B">
+            </div>
+        </div>
+
+        <h3>💰 Condiciones Económicas</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Renta mensual (€)</label>
+                <input type="number" id="renta" placeholder="800">
+            </div>
+            <div class="form-group">
+                <label>Fianza (€)</label>
+                <input type="number" id="fianza" placeholder="800">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Fecha de inicio</label>
+                <input type="date" id="fechaInicio">
+            </div>
+            <div class="form-group">
+                <label>Duración inicial (años)</label>
+                <select id="duracion">
+                    <option value="1">1 año</option>
+                    <option value="2">2 años</option>
+                    <option value="3">3 años</option>
+                    <option value="4">4 años</option>
+                    <option value="5">5 años</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Día de pago mensual</label>
+            <input type="number" id="diaPago" min="1" max="31" placeholder="5">
+        </div>
+
+        <button class="btn-generar" onclick="generarContrato()">📄 Generar Contrato</button>
+    </div>
+
+    <div id="contratoPreview" class="contrato-preview">
+        <h3>📋 Contrato de Alquiler Generado</h3>
+        <div id="contratoContent" class="contrato-content"></div>
+        <button class="btn-imprimir" onclick="imprimirContrato()">🖨️ Imprimir Contrato</button>
+    </div>
+</div>
+
+<script>
+function toggleDarkMode() {
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+    document.getElementById('btnDark').innerText = isDark ? "☀️ Modo Claro" : "🌙 Modo Oscuro";
+}
+
+function generarContrato() {
+    const datos = {
+        ciudad: document.getElementById('ciudad').value,
+        fecha: document.getElementById('fecha').value,
+        direccion: document.getElementById('direccion').value,
+        superficie: document.getElementById('superficie').value,
+        habitaciones: document.getElementById('habitaciones').value,
+        descripcion: document.getElementById('descripcion').value,
+        propietarioNombre: document.getElementById('propietarioNombre').value,
+        propietarioDni: document.getElementById('propietarioDni').value,
+        propietarioDireccion: document.getElementById('propietarioDireccion').value,
+        inquilinoNombre: document.getElementById('inquilinoNombre').value,
+        inquilinoDni: document.getElementById('inquilinoDni').value,
+        renta: document.getElementById('renta').value,
+        fianza: document.getElementById('fianza').value,
+        fechaInicio: document.getElementById('fechaInicio').value,
+        duracion: document.getElementById('duracion').value,
+        diaPago: document.getElementById('diaPago').value
+    };
+
+    // Validar campos obligatorios
+    if (!datos.ciudad || !datos.fecha || !datos.direccion || !datos.propietarioNombre || 
+        !datos.propietarioDni || !datos.inquilinoNombre || !datos.inquilinoDni || 
+        !datos.renta || !datos.fechaInicio || !datos.diaPago) {
+        alert('⚠️ Por favor, completa todos los campos obligatorios.');
+        return;
+    }
+
+    const contrato = `
+CONTRATO DE ARRENDAMIENTO DE VIVIENDA
+
+En ${datos.ciudad}, a ${new Date(datos.fecha).toLocaleDateString('es-ES')}
+
+REUNIDOS
+
+DE UNA PARTE: D./Dña. ${datos.propietarioNombre}, con DNI/NIE ${datos.propietarioDni}, 
+domiciliado/a en ${datos.propietarioDireccion} (en adelante, "EL ARRENDADOR").
+
+DE OTRA PARTE: D./Dña. ${datos.inquilinoNombre}, con DNI/NIE ${datos.inquilinoDni} 
+(en adelante, "EL ARRENDATARIO").
+
+Ambas partes se reconocen mutuamente la capacidad legal necesaria para celebrar el presente contrato y, a tal efecto,
+
+MANIFIESTAN
+
+I. Que EL ARRENDADOR es propietario del inmueble sito en:
+${datos.direccion}
+Superficie: ${datos.superficie} m²
+Habitaciones: ${datos.habitaciones}
+${datos.descripcion ? 'Descripción: ' + datos.descripcion : ''}
+
+II. Que EL ARRENDATARIO está interesado en arrendar dicho inmueble para uso de vivienda.
+
+III. Que ambas partes han convenido formalizar el presente contrato con arreglo a las siguientes:
+
+CLÁUSULAS
+
+PRIMERA.- OBJETO DEL CONTRATO
+EL ARRENDADOR cede en arrendamiento a EL ARRENDATARIO el inmueble descrito en el Manifiesto I, 
+para uso exclusivo de vivienda familiar.
+
+SEGUNDA.- DURACIÓN
+El presente contrato se formaliza por plazo de ${datos.duracion} año(s), 
+comprendido entre el ${new Date(datos.fechaInicio).toLocaleDateString('es-ES')} y el 
+${new Date(new Date(datos.fechaInicio).setFullYear(new Date(datos.fechaInicio).getFullYear() + parseInt(datos.duracion))).toLocaleDateString('es-ES')}.
+
+Transcurrido el plazo inicial, el contrato se prorrogará tácitamente por períodos anuales, 
+de conformidad con la Ley de Arrendamientos Urbanos.
+
+TERCERA.- RENTA
+La renta mensual será de ${datos.renta} € (${new Date().toLocaleDateString('es-ES', {month: 'long', year: 'numeric'})}), 
+que será abonada por EL ARRENDATARIO mediante transferencia bancaria a la cuenta que EL ARRENDADOR 
+indique, dentro de los primeros ${datos.diaPago} días de cada mes.
+
+CUARTA.- FIANZA
+EL ARRENDATARIO entrega en este acto la cantidad de ${datos.fianza} € en concepto de fianza, 
+que quedará en poder de EL ARRENDADOR como garantía del cumplimiento de las obligaciones del contrato.
+
+QUINTA.- DESTINO DEL INMUEBLE
+El inmueble se destinará exclusivamente a vivienda, quedando prohibido su uso para actividades 
+comerciales, industriales o profesionales.
+
+SEXTA.- OBRAS Y MEJORAS
+Las obras de mejora serán por cuenta de EL ARRENDADOR, salvo las pequeñas reparaciones que 
+exija el desgaste por el uso ordinario de la vivienda.
+
+SÉPTIMA.- GASTOS COMUNES
+Los gastos de comunidad, suministros e impuestos serán por cuenta de EL ARRENDATARIO.
+
+OCTAVA.- INVENTARIO
+Ambas partes firman el inventario de bienes que se adjunta como anexo al presente contrato.
+
+NOVENA.- JURISDICCIÓN
+Para cualquier litigio que pudiera surgir en la interpretación o cumplimiento del presente contrato, 
+las partes se someten expresamente a los Juzgados y Tribunales de ${datos.ciudad}.
+
+Y en prueba de conformidad, ambas partes firman el presente contrato por duplicado, 
+en el lugar y fecha indicados en el encabezamiento.
+
+EL ARRENDADOR
+
+Firma: _________________________
+${datos.propietarioNombre}
+DNI/NIE: ${datos.propietarioDni}
+
+EL ARRENDATARIO
+
+Firma: _________________________
+${datos.inquilinoNombre}
+DNI/NIE: ${datos.inquilinoDni}
+`;
+
+    document.getElementById('contratoContent').textContent = contrato;
+    document.getElementById('contratoPreview').style.display = 'block';
+    document.getElementById('contratoPreview').scrollIntoView({ behavior: 'smooth' });
+}
+
+function imprimirContrato() {
+    window.print();
+}
+
+// Establecer fecha actual por defecto
+window.addEventListener('load', () => {
+    if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark-mode');
+    
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha').value = today;
+    
+    // Fecha de inicio por defecto (próximo mes)
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    document.getElementById('fechaInicio').value = nextMonth.toISOString().split('T')[0];
+    
+    // Fianza por defecto (igual a la renta)
+    document.getElementById('fianza').addEventListener('input', function() {
+        if (!this.value) {
+            this.value = document.getElementById('renta').value;
+        }
+    });
+});
+</script>
+
+<style>
+@media print {
+    body { background: white; }
+    .btn-volver, .btn-dark-mode, .formulario, .btn-imprimir { display: none; }
+    .contrato-preview { box-shadow: none; margin: 0; padding: 0; }
+    .contrato-content { 
+        background: white; 
+        border: none; 
+        padding: 0; 
+        max-height: none; 
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+}
+</style>
+
+</body>
+</html>
